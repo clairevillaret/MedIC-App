@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medic/list_hospital.dart';
 import 'package:medic/triage_screen.dart';
 
 class SelectHospital extends StatefulWidget {
@@ -20,7 +21,9 @@ class _SelectHospitalState extends State<SelectHospital>{
         children: [
           const Text("Triage Results"),
           RawMaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ListHospital()));
+            },
             child: Container(
                 width: MediaQuery.of(context).size.width,
                 margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 60.0),
