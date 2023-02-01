@@ -1,129 +1,34 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:medic/user%20side/filter_class.dart';
+import 'widget_class.dart';
 
 class ListHospital extends StatefulWidget {
   const ListHospital({Key? key}) : super(key: key);
+
 
   @override
   State<ListHospital> createState() => _ListHospitalState();
 }
 
+
+
 class _ListHospitalState extends State<ListHospital>{
   Query dbRef = FirebaseDatabase.instance.ref().child('hospitals');
+
+  DatabaseReference firebaseRef = FirebaseDatabase.instance.ref().child('hospitals');
 
   TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
   }
+
 
   @override
   Widget build(BuildContext context) {
-    Widget listItem({required Map hospital}){
-      return Container(
-        margin: const EdgeInsets.fromLTRB(5, 10, 5, 2),
-        padding: const EdgeInsets.all(10),
-        height: 140.0,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                RawMaterialButton(
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 50.0,
-                        backgroundImage: NetworkImage(hospital['pic_url']),
-                        backgroundColor: Colors.transparent,
-                      ),
-                      const SizedBox(width: 8.0),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            hospital["name"],
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                              height: 2.0,
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Ambulance: ',style: TextStyle(fontSize: 16.0),),
-                              Text(
-                                hospital['ambulance'],
-                                style: const TextStyle(fontSize: 16.0),)
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text('ER beds: ',style: TextStyle(fontSize: 16.0),),
-                              Text(
-                                hospital["er_bed"].toString(),
-                                style: const TextStyle(fontSize: 16.0),)
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text('Private rooms: ',style: TextStyle(fontSize: 16.0),),
-                              Text(
-                                hospital["private_room"].toString(),
-                                style: const TextStyle(fontSize: 16.0),)
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text('Wards: ',style: TextStyle(fontSize: 16.0),),
-                              Text(
-                                hospital["ward"].toString(),
-                                style: const TextStyle(fontSize: 16.0),)
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  onPressed: (){
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Select this hospital",
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                          ),),
-                        actions: [
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text("YES",
-                              style: TextStyle(fontSize: 25.0),),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text("NO",
-                              style: TextStyle(fontSize: 25.0),),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFFba181b),
@@ -198,7 +103,14 @@ class _ListHospitalState extends State<ListHospital>{
                           ),),
                       ),
                       TextButton(
-                        onPressed: (){
+                        onPressed: () {
+                          //Query public = dbRef.orderByChild('type').equalTo('public').once() as Query;
+                          //final public = firebaseRef.orderByChild('type').equalTo('public');
+
+                          FilterClass(dbRef:dbRef, category: 'public');
+                          setState ((){
+
+                          });
 
                         },
                         style: ButtonStyle(
@@ -273,10 +185,10 @@ class _ListHospitalState extends State<ListHospital>{
                     final name = snapshot.child('name').value.toString();
 
                     if(controller.text.isEmpty){
-                      return listItem(hospital:hospital);
+                      return WidgetClass(hospital: hospital, name: name, db: dbRef,);
                     }
                     else if(name.toLowerCase().contains(controller.text.toLowerCase())){
-                      return listItem(hospital: hospital);
+                      return WidgetClass(hospital: hospital, name: name, db: dbRef,);
                     }
                     else{
                       return Container(
@@ -290,6 +202,6 @@ class _ListHospitalState extends State<ListHospital>{
           ),
         )
     );
-
   }
 }
+
