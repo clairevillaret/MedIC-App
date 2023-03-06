@@ -57,38 +57,40 @@ class _HomeScreenState extends State<HomeScreen>{
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    //margin: const EdgeInsets.fromLTRB(0.0, 90.0, 0.0, 50.0),
-                    height: 150,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('images/lifeline.jpg',
-                          ),
-                          opacity: 0.4,
-                          fit: BoxFit.cover,)
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RawMaterialButton(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
-                        },
-                        child: Image.asset('images/emergency_button.png',
-                          height: 300.0,
-                          width: 300.0,
-                        ),
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      //margin: const EdgeInsets.fromLTRB(0.0, 90.0, 0.0, 50.0),
+                      height: 150,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('images/lifeline.jpg',
+                            ),
+                            opacity: 0.4,
+                            fit: BoxFit.cover,)
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RawMaterialButton(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
+                          },
+                          child: Image.asset('images/emergency_button.png',
+                            height: 300.0,
+                            width: 300.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

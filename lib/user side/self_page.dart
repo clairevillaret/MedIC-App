@@ -5,6 +5,9 @@ import 'package:medic/user%20side/UI%20screens/emergency_result.dart';
 import 'package:medic/user%20side/fellowSelf_page.dart';
 import 'package:medic/user%20side/UI%20screens/non-urgent_result.dart';
 import 'package:medic/user%20side/UI%20screens/priority_result.dart';
+import 'package:medic/user%20side/display_TriageResults.dart';
+import 'package:medic/user%20side/saveTriageResults_class.dart';
+import 'package:provider/provider.dart';
 
 import 'checkbox_class.dart';
 
@@ -21,6 +24,9 @@ class _SelfAutofillState extends State<SelfAutofill>{
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   final currentUser = FirebaseAuth.instance.currentUser;
 
+  var userName = '';
+  var userBirthday = '';
+
   final formController = TextEditingController();
   List<String> sex = ['*Select sex*','Male','Female'];
   String selectedSex = '*Select sex*';
@@ -36,6 +42,54 @@ class _SelfAutofillState extends State<SelfAutofill>{
   List<CheckboxModel> lifeThreats = <CheckboxModel>[];
   List<CheckboxModel> bleeding = <CheckboxModel>[];
   List<CheckboxModel> prioritySigns = <CheckboxModel>[];
+
+  List<String> selectedItems = [];
+  List<String> listSymptoms = [];
+  String triageResult = "";
+
+  var countPriority = 0;
+  var countEmergency = 0;
+
+  toListSymptoms() {
+    for (var item in selectedItems) {
+      listSymptoms.add(item.toString());
+    }
+    return listSymptoms.toList();
+  }
+
+  generateTriageResults() {
+    if (countEmergency > 0) {
+      if (!mounted) return;
+      triageResult = "Emergency Case";
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmergencyResult()));
+    } else if (countEmergency == 0 && countPriority > 0){
+      if (!mounted) return;
+      triageResult = "Priority Case";
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityResult()));
+    } else {
+      triageResult = "Non-urgent Case";
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const NonUrgentResult()));
+    }
+  }
+
+  saveTriageResults(){
+    Provider.of<SaveTriageResults>(context, listen: false).saveName(userName);
+    Provider.of<SaveTriageResults>(context, listen: false).saveAge(userBirthday);
+    Provider.of<SaveTriageResults>(context, listen: false).saveSex(selectedSex);
+    Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
+  }
+
+  Future saveUserResults(String sex, String mainConcerns, String symptoms, String result) async {
+    await FirebaseFirestore.instance.collection('users triage').add({
+      'Name:': userName,
+      'Birthday': userBirthday,
+      'Sex': sex,
+      'Main Concerns': mainConcerns,
+      'Symptoms': toListSymptoms(),
+      'Triage Result': triageResult,
+    });
+  }
 
 
   @override
@@ -84,7 +138,10 @@ class _SelfAutofillState extends State<SelfAutofill>{
       CheckboxModel(id: 11, name: "New extensive rash (Stevens-Johnson)", selected: false),
       CheckboxModel(id: 12, name: "Sickle cell with pain, cough, fever, priapism", selected: false),
     });
-
+    Future.delayed(Duration.zero,(){
+      Provider.of<SaveTriageResults>(context, listen: false).symptoms = selectedItems;
+    });
+    toListSymptoms();
     super.initState();
   }
 
@@ -134,6 +191,8 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       return const CircularProgressIndicator();
                     }
                     else if(snapshot.connectionState == ConnectionState.done) {
+                      userName = snapshot.data?.docs[0].get('Full Name');
+                      userBirthday = snapshot.data?.docs[0].get('Birthdate');
                       return Container(
                         //margin: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
                         child: ListView.builder(
@@ -150,7 +209,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                     ),),
                                     Expanded(
                                       child: ListTile(
-                                        title: Text(snapshot.data?.docs[0].get('Full Name'),
+                                        title: Text(userName,
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -175,7 +234,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                           )),
                                       Expanded(
                                         child: ListTile(
-                                          title: Text(snapshot.data?.docs[0].get('Birthdate'),
+                                          title: Text(userBirthday,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -262,7 +321,15 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   onChanged: (value) {
                     setState(() {
                       checkAll = value!;
-                      for (var element in airwayBreathing) {element.selected = value;}
+                      for (var element in airwayBreathing) {
+                        element.selected = value;
+                        element.selected
+                            ? () { context.read<SaveTriageResults>().addSymptom(element.name);
+                        countEmergency+=1; print(countEmergency);}()
+                            : () { context.read<SaveTriageResults>().removeSymptom(element.name);
+                        countEmergency-=1; print(countEmergency);}();
+                      }
+                      print(selectedItems);
                     });
                   }
               ),
@@ -282,6 +349,12 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             final check = airwayBreathing.every((element) => element.selected);
                             checkAll = check;
                           }
+                          value
+                              ? () {context.read<SaveTriageResults>().addSymptom(airwayBreathing[index].name);
+                          countEmergency+=1; print(countEmergency);}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(airwayBreathing[index].name);
+                          countEmergency-=1; print(countEmergency);}();
+                          print(selectedItems);
                         });
                       }
                   );
@@ -296,7 +369,15 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   onChanged: (value) {
                     setState(() {
                       checkAll2 = value!;
-                      for (var element in circulation) {element.selected = value;}
+                      for (var element in circulation) {
+                        element.selected = value;
+                        element.selected
+                            ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                        countEmergency+=1;}()
+                            : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                        countEmergency-=1;}();
+                      }
+                      print(selectedItems);
                     });
                   }
               ),
@@ -316,6 +397,12 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             final check = circulation.every((element) => element.selected);
                             checkAll2 = check;
                           }
+                          value
+                              ? () {context.read<SaveTriageResults>().addSymptom(circulation[index].name);
+                          countEmergency+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(circulation[index].name);
+                          countEmergency-=1;}();
+                          print(selectedItems);
                         });
                       }
                   );
@@ -329,7 +416,15 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   onChanged: (value) {
                     setState(() {
                       checkAll3 = value!;
-                      for (var element in disability) {element.selected = value;}
+                      for (var element in disability) {
+                        element.selected = value;
+                        element.selected
+                            ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                        countEmergency+=1;}()
+                            : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                        countEmergency-=1;}();
+                      }
+                      print(selectedItems);
                     });
                   }
               ),
@@ -349,6 +444,12 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             final check = disability.every((element) => element.selected);
                             checkAll3 = check;
                           }
+                          value
+                              ? () {context.read<SaveTriageResults>().addSymptom(disability[index].name);
+                          countEmergency+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(disability[index].name);
+                          countEmergency-=1;}();
+                          print(selectedItems);
                         });
                       }
                   );
@@ -362,7 +463,15 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   onChanged: (value) {
                     setState(() {
                       checkAll4 = value!;
-                      for (var element in lifeThreats) {element.selected = value;}
+                      for (var element in lifeThreats) {
+                        element.selected = value;
+                        element.selected
+                            ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                        countEmergency+=1;}()
+                            : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                        countEmergency-=1;}();
+                      }
+                      print(selectedItems);
                     });
                   }
               ),
@@ -382,6 +491,13 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             final check = lifeThreats.every((element) => element.selected);
                             checkAll4 = check;
                           }
+                          value
+                              ? () {context.read<SaveTriageResults>().addSymptom(lifeThreats[index].name);
+                          countEmergency+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(lifeThreats[index].name);
+                          countEmergency-=1;}();
+
+                          print(selectedItems);
                         });
                       }
                   );
@@ -409,7 +525,15 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   onChanged: (value) {
                     setState(() {
                       checkAll5 = value!;
-                      for (var element in bleeding) {element.selected = value;}
+                      for (var element in bleeding) {
+                        element.selected = value;
+                        element.selected
+                            ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                        countPriority+=1;}()
+                            : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                        countPriority-=1;}();
+                      }
+                      print(selectedItems);
                     });
                   }
               ),
@@ -429,6 +553,13 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             final check = bleeding.every((element) => element.selected);
                             checkAll5 = check;
                           }
+                          value
+                              ? () {context.read<SaveTriageResults>().addSymptom(bleeding[index].name);
+                          countPriority+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(bleeding[index].name);
+                          countPriority-=1;}();
+
+                          print(selectedItems);
                         });
                       }
                   );
@@ -447,16 +578,18 @@ class _SelfAutofillState extends State<SelfAutofill>{
                         setState(() {
                           prioritySigns[index].selected = value!;
 
+                          value
+                              ? () {context.read<SaveTriageResults>().addSymptom(prioritySigns[index].name);
+                          countPriority+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(prioritySigns[index].name);
+                          countPriority-=1;}();
+
+                          print(selectedItems);
                         });
                       }
                   );
                 },
               ),
-
-
-
-
-
 
               Container(
                 width: double.infinity,
@@ -471,9 +604,15 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     side: const BorderSide(color: Color(0xFFba181b)),
                   ),
                   onPressed: (){
-                    //if (_formKey.currentState!.validate()){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmergencyResult()));
-                    //}
+                    generateTriageResults();
+                    saveTriageResults();
+
+                    // saveUserResults(
+                    //     selectedSex,
+                    //     formController.text.trim(),
+                    //     selectedItems.toString(),
+                    //   triageResult,
+                    // );
                   },
                   child: const Text('Submit',
                     style: TextStyle(

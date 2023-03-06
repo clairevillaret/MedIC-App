@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:medic/user%20side/checkbox_class.dart';
-import 'package:medic/user%20side/emergency_case.dart';
 import 'package:medic/user%20side/fellowSelf_page.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:medic/user%20side/triage_results.dart';
+import 'package:provider/provider.dart';
+import 'UI screens/emergency_result.dart';
+import 'UI screens/non-urgent_result.dart';
+import 'UI screens/priority_result.dart';
 
 
 class TriageForm extends StatefulWidget {
@@ -36,6 +39,55 @@ class _TriageFormState extends State<TriageForm> {
   List<CheckboxModel> bleeding = <CheckboxModel>[];
   List<CheckboxModel> prioritySigns = <CheckboxModel>[];
 
+  List<String> selectedItems = [];
+  List<String> listSymptoms = [];
+  String triageResult = "";
+
+  var countPriority = 0;
+  var countEmergency = 0;
+
+  toListSymptoms() {
+    for (var item in selectedItems) {
+      listSymptoms.add(item.toString());
+    }
+    return listSymptoms.toList();
+  }
+
+  generateTriageResults() {
+    if (countEmergency > 0) {
+      if (!mounted) return;
+      triageResult = "Emergency Case";
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmergencyResult()));
+    } else if (countEmergency == 0 && countPriority > 0){
+      if (!mounted) return;
+      triageResult = "Priority Case";
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityResult()));
+    } else {
+      triageResult = "Non-urgent Case";
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const NonUrgentResult()));
+    }
+
+  }
+
+  saveTriageResults(){
+    Provider.of<SaveTriageResults>(context, listen: false).saveName(nameController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveAge(ageController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveSex(selectedSex);
+    Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
+
+  }
+
+  Future saveFellowResults(String name, String age, String sex, String mainConcerns, String symptoms, String result) async {
+    await FirebaseFirestore.instance.collection('fellow').add({
+      'Name': name,
+      'Age': age,
+      'Sex': sex,
+      'Main Concerns': mainConcerns,
+      'Symptoms': toListSymptoms(),
+      'Triage Result': triageResult,
+    });
+  }
 
   @override
   void initState() {
@@ -83,7 +135,10 @@ class _TriageFormState extends State<TriageForm> {
       CheckboxModel(id: 11, name: "New extensive rash (Stevens-Johnson)", selected: false),
       CheckboxModel(id: 12, name: "Sickle cell with pain, cough, fever, priapism", selected: false),
     });
-
+    Future.delayed(Duration.zero,(){
+      Provider.of<SaveTriageResults>(context, listen: false).symptoms = selectedItems;
+    });
+    toListSymptoms();
     super.initState();
   }
 
@@ -98,6 +153,7 @@ class _TriageFormState extends State<TriageForm> {
             icon: const Icon(Icons.arrow_back),
             iconSize: 25.0,
             onPressed: () {
+              context.read<SaveTriageResults>().clearList();
               Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
             },
           ),
@@ -108,9 +164,9 @@ class _TriageFormState extends State<TriageForm> {
             ),
           )
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -198,6 +254,20 @@ class _TriageFormState extends State<TriageForm> {
                   ),
                 ),
                 const SizedBox(height: 30.0,),
+                // Container(
+                //   padding: const EdgeInsets.only(left: 0.0, top: 9.0, right: 0.0, bottom: 8.0),
+                //   child: Consumer<SaveTriageResults>(
+                //     builder: (context, SaveTriageResults, child) {
+                //       return Text("Symptoms: ${SaveTriageResults.symptoms}");
+                //     },
+                //   ),
+                // ),
+                // TextButton(
+                //     onPressed: () {
+                //       Navigator.push(context, MaterialPageRoute(builder: (context) => const ReceiveData()));
+                //     },
+                //     child: const Text("Check data")),
+
                 // add checklist here
                 const Text('Instruction: Please check those that are applicable',
                   style: TextStyle(
@@ -230,7 +300,16 @@ class _TriageFormState extends State<TriageForm> {
                     onChanged: (value) {
                       setState(() {
                         checkAll = value!;
-                        for (var element in airwayBreathing) {element.selected = value;}
+                        for (var element in airwayBreathing) {
+                          element.selected = value;
+                          element.selected
+                          //Provider.of<SaveTriageResults>(context, listen: false).addSymptom(element.name)
+                              ? () { context.read<SaveTriageResults>().addSymptom(element.name);
+                            countEmergency+=1; print(countEmergency);}()
+                              : () { context.read<SaveTriageResults>().removeSymptom(element.name);
+                            countEmergency-=1; print(countEmergency);}();
+                        }
+                        print(selectedItems);
                       });
                     }
                 ),
@@ -250,6 +329,14 @@ class _TriageFormState extends State<TriageForm> {
                               final check = airwayBreathing.every((element) => element.selected);
                               checkAll = check;
                             }
+                            value
+                                ? () {context.read<SaveTriageResults>().addSymptom(airwayBreathing[index].name);
+                              countEmergency+=1; print(countEmergency);}()
+                                : () {context.read<SaveTriageResults>().removeSymptom(airwayBreathing[index].name);
+                            countEmergency-=1; print(countEmergency);}();
+
+                            print(selectedItems);
+
                           });
                         }
                     );
@@ -264,7 +351,15 @@ class _TriageFormState extends State<TriageForm> {
                     onChanged: (value) {
                       setState(() {
                         checkAll2 = value!;
-                        for (var element in circulation) {element.selected = value;}
+                        for (var element in circulation) {
+                          element.selected = value;
+                          element.selected
+                              ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                            countEmergency+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                            countEmergency-=1;}();
+                        }
+                        print(selectedItems);
                       });
                     }
                 ),
@@ -284,6 +379,12 @@ class _TriageFormState extends State<TriageForm> {
                               final check = circulation.every((element) => element.selected);
                               checkAll2 = check;
                             }
+                            value
+                                ? () {context.read<SaveTriageResults>().addSymptom(circulation[index].name);
+                              countEmergency+=1;}()
+                                : () {context.read<SaveTriageResults>().removeSymptom(circulation[index].name);
+                              countEmergency-=1;}();
+                            print(selectedItems);
                           });
                         }
                     );
@@ -297,7 +398,15 @@ class _TriageFormState extends State<TriageForm> {
                     onChanged: (value) {
                       setState(() {
                         checkAll3 = value!;
-                        for (var element in disability) {element.selected = value;}
+                        for (var element in disability) {
+                          element.selected = value;
+                          element.selected
+                              ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                            countEmergency+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                            countEmergency-=1;}();
+                        }
+                        print(selectedItems);
                       });
                     }
                 ),
@@ -317,6 +426,12 @@ class _TriageFormState extends State<TriageForm> {
                               final check = disability.every((element) => element.selected);
                               checkAll3 = check;
                             }
+                            value
+                                ? () {context.read<SaveTriageResults>().addSymptom(disability[index].name);
+                              countEmergency+=1;}()
+                                : () {context.read<SaveTriageResults>().removeSymptom(disability[index].name);
+                              countEmergency-=1;}();
+                            print(selectedItems);
                           });
                         }
                     );
@@ -330,7 +445,15 @@ class _TriageFormState extends State<TriageForm> {
                     onChanged: (value) {
                       setState(() {
                         checkAll4 = value!;
-                        for (var element in lifeThreats) {element.selected = value;}
+                        for (var element in lifeThreats) {
+                          element.selected = value;
+                          element.selected
+                              ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                            countEmergency+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                            countEmergency-=1;}();
+                        }
+                        print(selectedItems);
                       });
                     }
                 ),
@@ -350,6 +473,12 @@ class _TriageFormState extends State<TriageForm> {
                               final check = lifeThreats.every((element) => element.selected);
                               checkAll4 = check;
                             }
+                            value
+                                ? () {context.read<SaveTriageResults>().addSymptom(lifeThreats[index].name);
+                              countEmergency+=1;}()
+                                : () {context.read<SaveTriageResults>().removeSymptom(lifeThreats[index].name);
+                              countEmergency-=1;}();
+                            print(selectedItems);
                           });
                         }
                     );
@@ -377,7 +506,16 @@ class _TriageFormState extends State<TriageForm> {
                     onChanged: (value) {
                       setState(() {
                         checkAll5 = value!;
-                        for (var element in bleeding) {element.selected = value;}
+                        //for (var element in bleeding) {element.selected = value;}
+                        for (var element in bleeding) {
+                          element.selected = value;
+                          element.selected
+                              ? () {context.read<SaveTriageResults>().addSymptom(element.name);
+                            countPriority+=1;}()
+                              : () {context.read<SaveTriageResults>().removeSymptom(element.name);
+                            countPriority-=1;}();
+                        }
+                        print(selectedItems);
                       });
                     }
                 ),
@@ -397,6 +535,12 @@ class _TriageFormState extends State<TriageForm> {
                               final check = bleeding.every((element) => element.selected);
                               checkAll5 = check;
                             }
+                            value
+                                ? () {context.read<SaveTriageResults>().addSymptom(bleeding[index].name);
+                              countPriority+=1;}()
+                                : () {context.read<SaveTriageResults>().removeSymptom(bleeding[index].name);
+                              countPriority-=1;}();
+                            print(selectedItems);
                           });
                         }
                     );
@@ -414,6 +558,13 @@ class _TriageFormState extends State<TriageForm> {
                         onChanged: (value) {
                           setState(() {
                             prioritySigns[index].selected = value!;
+
+                            value
+                                ? () {context.read<SaveTriageResults>().addSymptom(prioritySigns[index].name);
+                              countPriority+=1;}()
+                                : () {context.read<SaveTriageResults>().removeSymptom(prioritySigns[index].name);
+                              countPriority-=1;}();
+                            print(selectedItems);
 
                           });
                         }
@@ -436,12 +587,17 @@ class _TriageFormState extends State<TriageForm> {
                     ),
                     onPressed: (){
                       if (_formKey.currentState!.validate()){
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) =>TriageResults(
-                                name: nameController.text,
-                                age: ageController.text,
-                              concern: formController.text,
-                            )));
+                        generateTriageResults();
+                        saveTriageResults();
+
+                        // saveFellowResults(
+                        //     nameController.text.trim(),
+                        //     ageController.text.toString(),
+                        //     selectedSex,
+                        //   formController.text.trim(),
+                        //   selectedItems.toString(),
+                        //   triageResult,
+                        // );
                       }
                     },
                     child: const Text('Submit',

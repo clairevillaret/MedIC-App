@@ -4,6 +4,8 @@ import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/select_hospital.dart';
 import 'package:medic/user%20side/self_page.dart';
 
+import '../recieveData_page.dart';
+
 class EmergencyResult extends StatefulWidget {
   const EmergencyResult({Key? key}) : super(key: key);
 
@@ -94,6 +96,14 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30.0,),
+
+                  TextButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ReceiveData()));
+                      },
+                      child: const Text("Check data")),
+
+
                   const Divider(
                     color: Colors.black12,
                     thickness: 2.0,
