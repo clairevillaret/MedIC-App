@@ -21,12 +21,17 @@ class _TriageFormState extends State<TriageForm> {
   final nameController = TextEditingController();
   final ageController = TextEditingController();
   final formController = TextEditingController();
+  final bdayController = TextEditingController();
+  final addressController = TextEditingController();
+
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   List<String> sex = ['*Select sex*','Male','Female'];
   String selectedSex = '*Select sex*';
   String travelMode = "AMBULANCE";
+  String hospitalUserId = "*hospital name*";
+  String status = "*pending*";
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
@@ -80,11 +85,28 @@ class _TriageFormState extends State<TriageForm> {
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
     Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(travelMode);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(bdayController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(addressController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(hospitalUserId);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(status);
+
 
   }
 
-  Future saveFellowResults(String name, String age, String sex, String mainConcerns, String symptoms, String result, String travel) async {
-    await FirebaseFirestore.instance.collection('fellow').add({
+  Future saveFellowResults(
+      String name,
+      String age,
+      String sex,
+      String mainConcerns,
+      String symptoms,
+      String result,
+      String travel,
+      String birthday,
+      String address,
+      String hospitalId,
+      String hospitalStatus,
+      ) async {
+    await FirebaseFirestore.instance.collection('hospitals_patients').add({
       'Name': name,
       'Age': age,
       'Sex': sex,
@@ -92,6 +114,11 @@ class _TriageFormState extends State<TriageForm> {
       'Symptoms': toListSymptoms(),
       'Triage Result': triageResult,
       'Travel Mode': travelMode,
+      'Birthdate': birthday,
+      'Address': address,
+      'Hospital User ID': hospitalId,
+      'Status': hospitalStatus,
+
     });
   }
 
@@ -205,6 +232,21 @@ class _TriageFormState extends State<TriageForm> {
                     },
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
+                  child: TextFormField(
+                    controller: bdayController,
+                    decoration: const InputDecoration(
+                      labelText: 'Birthdate',
+                    ),
+                    validator: (value){
+                      if(value == null || value.isEmpty){
+                        return "* Required";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -245,7 +287,21 @@ class _TriageFormState extends State<TriageForm> {
                     ),
                   ],
                 ),
-
+                Padding(
+                  padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
+                  child: TextFormField(
+                    controller: addressController,
+                    decoration: const InputDecoration(
+                      labelText: 'Address',
+                    ),
+                    validator: (value){
+                      if(value == null || value.isEmpty){
+                        return "* Required";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 0.0, top: 9.0, right: 0.0, bottom: 8.0),
                   child: TextFormField(
@@ -624,7 +680,11 @@ class _TriageFormState extends State<TriageForm> {
                         //   formController.text.trim(),
                         //   selectedItems.toString(),
                         //   triageResult,
-                        //   travelMode
+                        //   travelMode,
+                        //   bdayController.text.trim(),
+                        //   addressController.text.trim(),
+                        //   hospitalUserId,
+                        //   status,
                         // );
                       }
                     },

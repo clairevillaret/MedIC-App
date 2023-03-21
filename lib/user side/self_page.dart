@@ -26,11 +26,16 @@ class _SelfAutofillState extends State<SelfAutofill>{
 
   var userName = '';
   var userBirthday = '';
+  final bdayController = TextEditingController();
+  final ageController = TextEditingController();
+  final addressController = TextEditingController();
 
   final formController = TextEditingController();
   List<String> sex = ['*Select sex*','Male','Female'];
   String selectedSex = '*Select sex*';
   String travelMode = "AMBULANCE";
+  String hospitalUserId = "*hospital name*";
+  String status = "*pending*";
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
@@ -79,14 +84,29 @@ class _SelfAutofillState extends State<SelfAutofill>{
   saveTriageResults(){
     Provider.of<SaveTriageResults>(context, listen: false).saveName(userName);
     Provider.of<SaveTriageResults>(context, listen: false).saveAge(userBirthday);
+    Provider.of<SaveTriageResults>(context, listen: false).saveAge(ageController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveSex(selectedSex);
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
     Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(travelMode);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(addressController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(hospitalUserId);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(status);
+
   }
 
-  Future saveUserResults(String sex, String mainConcerns, String symptoms, String result,  String travel) async {
-    await FirebaseFirestore.instance.collection('users triage').add({
+  Future saveUserResults(
+      String sex,
+      String mainConcerns,
+      String symptoms,
+      String result,
+      String travel,
+      String age,
+      String address,
+      String hospitalId,
+      String hospitalStatus,
+      ) async {
+    await FirebaseFirestore.instance.collection('hospitals_patients').add({
       'Name:': userName,
       'Birthday': userBirthday,
       'Sex': sex,
@@ -94,6 +114,11 @@ class _SelfAutofillState extends State<SelfAutofill>{
       'Symptoms': toListSymptoms(),
       'Triage Result': triageResult,
       'Travel Mode': travelMode,
+      'Age': age,
+      'Address': address,
+      'Hospital User ID': hospitalId,
+      'Status': hospitalStatus,
+
     });
   }
 
@@ -239,9 +264,29 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                             )),
                                       ),
                                     ),
+                                  ],
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: ageController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Age',
+                                        ),
+                                        validator: (value){
+                                          if(value == null || value.isEmpty){
+                                            return "* Required";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15.0,),
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 0.0),
+                                        padding: const EdgeInsets.only(top: 8.0),
                                         child: DropdownButtonFormField<String>(
                                           value: selectedSex,
                                           icon: const Icon(Icons.keyboard_arrow_down),
@@ -261,7 +306,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                     ),
                                   ],
                                 ),
-
                               ],
                             );
                             },
@@ -270,6 +314,21 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     }
                     return Text('An error has occurred: ${snapshot.error}');
                   }
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
+                child: TextFormField(
+                  controller: addressController,
+                  decoration: const InputDecoration(
+                    labelText: 'Address',
+                  ),
+                  validator: (value){
+                    if(value == null || value.isEmpty){
+                      return "* Required";
+                    }
+                    return null;
+                  },
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
@@ -645,6 +704,10 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     //     selectedItems.toString(),
                     //   triageResult,
                     //   travelMode,
+                    //     ageController.text.trim(),
+                    //     addressController.text.trim(),
+                    //     hospitalUserId,
+                    //     status
                     // );
                   },
                   child: const Text('Submit',

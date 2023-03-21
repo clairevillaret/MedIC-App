@@ -6,9 +6,13 @@ class SaveTriageResults extends ChangeNotifier {
   String userName = "";
   String userAge = "";
   String userSex = "";
+  String userBirthday = "";
+  String userAddress = "";
   String mainConcern = "";
   String triageCategory = "";
   String travelMode = "";
+  String hospitalId = "";
+  String status = "";
   List<String> symptoms = [];
 
 
@@ -17,9 +21,13 @@ class SaveTriageResults extends ChangeNotifier {
   String get getName => userName;
   String get getAge => userAge;
   String get getSex => userSex;
+  String get getBirthdate => userBirthday;
+  String get getAddress => userAddress;
   String get getConcerns => mainConcern;
   String get getTriageCategory =>triageCategory;
   String get getTravelMode => travelMode;
+  String get getHospitalId => hospitalId;
+  String get getStatus => status;
 
 
   void addSymptom(String name) {
@@ -47,8 +55,17 @@ class SaveTriageResults extends ChangeNotifier {
     notifyListeners();
   }
 
+  void saveBirthdate(String birthdate) {
+    userBirthday = birthdate;
+    notifyListeners();
+  }
+
   void saveSex(String sex) {
     userSex = sex;
+    notifyListeners();
+  }
+  void saveAddress(String address) {
+    userAddress = address;
     notifyListeners();
   }
 
@@ -64,6 +81,16 @@ class SaveTriageResults extends ChangeNotifier {
 
   void saveTravelMode(String type) {
     travelMode = type;
+    notifyListeners();
+  }
+
+  void saveHospitalID(String id) {
+    hospitalId = id;
+    notifyListeners();
+  }
+
+  void saveStatus(String kind) {
+    status = kind;
     notifyListeners();
   }
 

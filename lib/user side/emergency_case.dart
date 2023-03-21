@@ -71,7 +71,7 @@ class _EmergencyCaseState extends State<EmergencyCase>{
       setState(() {
         _currentPosition = position;
         currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+        "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";
 
       });
     }catch(e) {
@@ -120,8 +120,21 @@ class _EmergencyCaseState extends State<EmergencyCase>{
         });
       }
     });
-
   }
+
+  // getTimeTravel() async {
+  //   ByRoadDistanceCalculator distance = ByRoadDistanceCalculator();
+  //
+  //
+  //   var distance = await distance.getDistance('YOUR API KEY',
+  //       startLatitude,
+  //       startLongitude,
+  //       destinationLatitude,
+  //       destinationLongitude,
+  //       travelMode: TravelModes.bicycling);
+  // }
+
+
 
   Future showConnection() async {
     await Future.delayed(const Duration(seconds: 3));
