@@ -37,7 +37,7 @@ class _PriorityResultState extends State<PriorityResult> {
               )
           ),
           backgroundColor: Colors.transparent,
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
               //height: MediaQuery.of(context).size.width,

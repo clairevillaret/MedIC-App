@@ -38,7 +38,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
               )
           ),
           backgroundColor: Colors.transparent,
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
               //height: MediaQuery.of(context).size.width,

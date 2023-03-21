@@ -26,6 +26,10 @@ class _TriageFormState extends State<TriageForm> {
 
   List<String> sex = ['*Select sex*','Male','Female'];
   String selectedSex = '*Select sex*';
+  String travelMode = "AMBULANCE";
+
+  bool requestAmbulance = true;
+  bool privateVehicle = false;
 
   bool checkAll = false;
   bool checkAll2 = false;
@@ -75,10 +79,11 @@ class _TriageFormState extends State<TriageForm> {
     Provider.of<SaveTriageResults>(context, listen: false).saveSex(selectedSex);
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(travelMode);
 
   }
 
-  Future saveFellowResults(String name, String age, String sex, String mainConcerns, String symptoms, String result) async {
+  Future saveFellowResults(String name, String age, String sex, String mainConcerns, String symptoms, String result, String travel) async {
     await FirebaseFirestore.instance.collection('fellow').add({
       'Name': name,
       'Age': age,
@@ -86,6 +91,7 @@ class _TriageFormState extends State<TriageForm> {
       'Main Concerns': mainConcerns,
       'Symptoms': toListSymptoms(),
       'Triage Result': triageResult,
+      'Travel Mode': travelMode,
     });
   }
 
@@ -247,28 +253,49 @@ class _TriageFormState extends State<TriageForm> {
                     maxLines: 5,
                     decoration: const InputDecoration(
                         hintText: "Please list your main health concerns / symptoms / problems.",
-                        labelText: "Main Concerns",
+                        labelText: "Chief complaints",
                         // border: OutlineInputBorder(
                         //     borderRadius: BorderRadius.circular(10.0)),
                     ),
                   ),
                 ),
-                const SizedBox(height: 30.0,),
-                // Container(
-                //   padding: const EdgeInsets.only(left: 0.0, top: 9.0, right: 0.0, bottom: 8.0),
-                //   child: Consumer<SaveTriageResults>(
-                //     builder: (context, SaveTriageResults, child) {
-                //       return Text("Symptoms: ${SaveTriageResults.symptoms}");
-                //     },
-                //   ),
-                // ),
-                // TextButton(
-                //     onPressed: () {
-                //       Navigator.push(context, MaterialPageRoute(builder: (context) => const ReceiveData()));
-                //     },
-                //     child: const Text("Check data")),
+                const SizedBox(height: 15.0,),
+                const Text('PLEASE SELECT TRAVEL MODE:',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Color(0xFFba181b),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.start,),
+                CheckboxListTile(
+                    title: const Text("Request for Ambulance"),
+                    contentPadding: const EdgeInsets.all(0.0),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: requestAmbulance,
+                    onChanged: (value) {
+                      setState(() {
+                        requestAmbulance = value!;
+                        privateVehicle = false;
+                        travelMode = "AMBULANCE";
+                      });
 
-                // add checklist here
+                    }
+                ),
+                CheckboxListTile(
+                    title: const Text("Travel through private vehicle"),
+                    contentPadding: const EdgeInsets.all(0.0),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: privateVehicle,
+                    onChanged: (value) {
+                      setState(() {
+                        privateVehicle = value!;
+                        requestAmbulance = false;
+                        travelMode = "Private Vehicle";
+                      });
+
+                    }
+                ),
+                const SizedBox(height: 15.0,),
                 const Text('Instruction: Please check those that are applicable',
                   style: TextStyle(
                     fontSize: 14.0,
@@ -597,6 +624,7 @@ class _TriageFormState extends State<TriageForm> {
                         //   formController.text.trim(),
                         //   selectedItems.toString(),
                         //   triageResult,
+                        //   travelMode
                         // );
                       }
                     },

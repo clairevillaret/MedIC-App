@@ -75,112 +75,112 @@ class _SelectHospitalState extends State<SelectHospital>{
         body: SafeArea(
           child: Column(
             children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      const Text("Filter by: ",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black54,
-                        ),),
-                      TextButton(
-                        onPressed: (){
-
-                        },
-                        style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all(Colors.white),
-                            // foregroundColor: getColor(Colors.red,Colors.white),
-                            //   backgroundColor: getColor(Colors.white, Colors.red),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("All",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Nearby",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          //Query public = dbRef.orderByChild('type').equalTo('public').once() as Query;
-                          //final public = firebaseRef.orderByChild('type').equalTo('public');
-                          //FilterClass(dbRef:dbRef, category: 'public');
-                          //setState ((){
-                          //});
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Public",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                          //filterSelected = 'Private';
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Private",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Availability",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Container(
+              //   alignment: Alignment.centerLeft,
+              //   margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+              //   child: SingleChildScrollView(
+              //     scrollDirection: Axis.horizontal,
+              //     child: Row(
+              //       children: [
+              //         const Text("Filter by: ",
+              //           style: TextStyle(
+              //             fontSize: 18.0,
+              //             color: Colors.black54,
+              //           ),),
+              //         TextButton(
+              //           onPressed: (){
+              //
+              //           },
+              //           style: ButtonStyle(
+              //               foregroundColor: MaterialStateProperty.all(Colors.white),
+              //               // foregroundColor: getColor(Colors.red,Colors.white),
+              //               //   backgroundColor: getColor(Colors.white, Colors.red),
+              //               shape: MaterialStateProperty.all(
+              //                   RoundedRectangleBorder(
+              //                       borderRadius: BorderRadius.circular(18.0),
+              //                       side: const BorderSide(color: Color(0xFFba181b))))
+              //
+              //           ),
+              //           child: const Text("All",
+              //             style: TextStyle(
+              //               color: Color(0xFFba181b),
+              //               fontSize: 18.0,
+              //             ),),
+              //         ),
+              //         TextButton(
+              //           onPressed: (){
+              //           },
+              //           style: ButtonStyle(
+              //               shape: MaterialStateProperty.all(
+              //                   RoundedRectangleBorder(
+              //                       borderRadius: BorderRadius.circular(18.0),
+              //                       side: const BorderSide(color: Color(0xFFba181b))))
+              //
+              //           ),
+              //           child: const Text("Nearby",
+              //             style: TextStyle(
+              //               color: Color(0xFFba181b),
+              //               fontSize: 18.0,
+              //             ),),
+              //         ),
+              //         TextButton(
+              //           onPressed: () {
+              //             //Query public = dbRef.orderByChild('type').equalTo('public').once() as Query;
+              //             //final public = firebaseRef.orderByChild('type').equalTo('public');
+              //             //FilterClass(dbRef:dbRef, category: 'public');
+              //             //setState ((){
+              //             //});
+              //           },
+              //           style: ButtonStyle(
+              //               shape: MaterialStateProperty.all(
+              //                   RoundedRectangleBorder(
+              //                       borderRadius: BorderRadius.circular(18.0),
+              //                       side: const BorderSide(color: Color(0xFFba181b))))
+              //
+              //           ),
+              //           child: const Text("Public",
+              //             style: TextStyle(
+              //               color: Color(0xFFba181b),
+              //               fontSize: 18.0,
+              //             ),),
+              //         ),
+              //         TextButton(
+              //           onPressed: (){
+              //             //filterSelected = 'Private';
+              //           },
+              //           style: ButtonStyle(
+              //               shape: MaterialStateProperty.all(
+              //                   RoundedRectangleBorder(
+              //                       borderRadius: BorderRadius.circular(18.0),
+              //                       side: const BorderSide(color: Color(0xFFba181b))))
+              //
+              //           ),
+              //           child: const Text("Private",
+              //             style: TextStyle(
+              //               color: Color(0xFFba181b),
+              //               fontSize: 18.0,
+              //             ),),
+              //         ),
+              //         TextButton(
+              //           onPressed: (){
+              //           },
+              //           style: ButtonStyle(
+              //               shape: MaterialStateProperty.all(
+              //                   RoundedRectangleBorder(
+              //                       borderRadius: BorderRadius.circular(18.0),
+              //                       side: const BorderSide(color: Color(0xFFba181b))))
+              //
+              //           ),
+              //           child: const Text("Availability",
+              //             style: TextStyle(
+              //               color: Color(0xFFba181b),
+              //               fontSize: 18.0,
+              //             ),),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               Expanded(
                 child: FirebaseAnimatedList(
                   query: dbRef,

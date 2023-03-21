@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:medic/user%20side/UI%20screens/priority_result.dart';
 import 'package:medic/user%20side/emergency_case.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/select_hospital.dart';
 import 'package:medic/user%20side/self_page.dart';
-
+import 'package:medic/user%20side/send_hospitalRequest.dart';
+import '../notification_service.dart';
 import '../recieveData_page.dart';
 
 class EmergencyResult extends StatefulWidget {
@@ -14,9 +16,24 @@ class EmergencyResult extends StatefulWidget {
 }
 
 class _EmergencyResultState extends State<EmergencyResult> {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: "Main Navigator");
+  late final LocalNotificationService service;
+
+    @override
+    void initState() {
+      service = LocalNotificationService();
+      service.init();
+      listenToNotification();
+      super.initState();
+    }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
+      routes: {
+        '/navigationPage' :(context)=>const PriorityResult()
+      },
       home: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
@@ -41,10 +58,10 @@ class _EmergencyResultState extends State<EmergencyResult> {
               )
           ),
           backgroundColor: Colors.transparent,
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
-              //height: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               margin: const EdgeInsets.all(30),
               padding: const EdgeInsets.all(30),
               decoration: BoxDecoration(
@@ -96,14 +113,6 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30.0,),
-
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ReceiveData()));
-                      },
-                      child: const Text("Check data")),
-
-
                   const Divider(
                     color: Colors.black12,
                     thickness: 2.0,
@@ -124,10 +133,16 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       borderRadius: BorderRadius.circular(20.0),
                       side: const BorderSide(color: Color(0xFFba181b)),
                     ),
-                    onPressed: (){
+                    onPressed: () async {
                       //if (_formKey.currentState!.validate()){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmergencyCase()));
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => const SendHospitalRequest()));
                       //}
+                      await service.showNotificationWithPayload(
+                          id: 0,
+                          title: 'Patient Information',
+                          body: 'See information',
+                          payload: 'Accept Request');
+
                     },
                     child: const Text('SELECT NEAREST HOSPITAL',
                       style: TextStyle(
@@ -181,5 +196,18 @@ class _EmergencyResultState extends State<EmergencyResult> {
         ),
       ),
     );
+  }
+
+  void listenToNotification() =>
+      service.onNotificationClick.stream.listen(onNotificationListener);
+
+  Future<void> onNotificationListener(String? payload) async {
+    if (payload != null && payload.isNotEmpty) {
+      navigatorKey.currentState?.push( MaterialPageRoute( builder: (context) => ReceiveData(payload: payload,)));
+      print('payload $payload');
+
+    }else{
+      print('payload empty');
+    }
   }
 }

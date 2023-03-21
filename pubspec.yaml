@@ -33,6 +33,13 @@ dependencies:
   geocoding: ^2.0.5
   fluttertoast: ^8.1.2
 
+  flutter_local_notifications: ^9.9.1
+  #flutter_local_notifications: ^13.0.0
+  rxdart: ^0.27.7
+  internet_connection_checker: ^1.0.0+1
+  connectivity_plus: ^3.0.3
+  google_maps_flutter: ^2.2.5
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -45,6 +52,10 @@ dependencies:
   cloud_firestore: ^4.1.0
   firebase_database: ^10.0.6
   firebase_auth: ^4.2.5
+  firebase_core: ^2.7.1
+
+
+
 
 
 dev_dependencies:

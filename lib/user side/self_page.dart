@@ -30,6 +30,10 @@ class _SelfAutofillState extends State<SelfAutofill>{
   final formController = TextEditingController();
   List<String> sex = ['*Select sex*','Male','Female'];
   String selectedSex = '*Select sex*';
+  String travelMode = "AMBULANCE";
+
+  bool requestAmbulance = true;
+  bool privateVehicle = false;
 
   bool checkAll = false;
   bool checkAll2 = false;
@@ -78,9 +82,10 @@ class _SelfAutofillState extends State<SelfAutofill>{
     Provider.of<SaveTriageResults>(context, listen: false).saveSex(selectedSex);
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
+    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(travelMode);
   }
 
-  Future saveUserResults(String sex, String mainConcerns, String symptoms, String result) async {
+  Future saveUserResults(String sex, String mainConcerns, String symptoms, String result,  String travel) async {
     await FirebaseFirestore.instance.collection('users triage').add({
       'Name:': userName,
       'Birthday': userBirthday,
@@ -88,6 +93,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
       'Main Concerns': mainConcerns,
       'Symptoms': toListSymptoms(),
       'Triage Result': triageResult,
+      'Travel Mode': travelMode,
     });
   }
 
@@ -218,51 +224,42 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                     ),
                                   ],
                                 ),
-                                Container(
-                                  //margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-                                  //padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-                                  // decoration: BoxDecoration(
-                                  //     borderRadius: BorderRadius.circular(10),
-                                  //     color: Colors.white,
-                                  //     boxShadow: const [BoxShadow(color: Colors.black26,spreadRadius: 1.5)]
-                                  // ),
-                                  child: Row(
-                                    children: [
-                                      const Text("Birthdate:",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          )),
-                                      Expanded(
-                                        child: ListTile(
-                                          title: Text(userBirthday,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              )),
+                                Row(
+                                  children: [
+                                    const Text("Birthdate:",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        )),
+                                    Expanded(
+                                      child: ListTile(
+                                        title: Text(userBirthday,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 0.0),
+                                        child: DropdownButtonFormField<String>(
+                                          value: selectedSex,
+                                          icon: const Icon(Icons.keyboard_arrow_down),
+                                          items: sex.map((String items) {
+                                            return DropdownMenuItem(
+                                              value: items,
+                                              child: Text(items),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              selectedSex = newValue!;
+                                            });
+                                          },
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(top: 0.0),
-                                          child: DropdownButtonFormField<String>(
-                                            value: selectedSex,
-                                            icon: const Icon(Icons.keyboard_arrow_down),
-                                            items: sex.map((String items) {
-                                              return DropdownMenuItem(
-                                                value: items,
-                                                child: Text(items),
-                                              );
-                                            }).toList(),
-                                            onChanged: (String? newValue) {
-                                              setState(() {
-                                                selectedSex = newValue!;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
 
                               ],
@@ -281,13 +278,48 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   maxLines: 5,
                   decoration: const InputDecoration(
                     hintText: "Please list your main health concerns / symptoms / problems.",
-                    labelText: "Main Concerns",
+                    labelText: "Chief complaints",
                     // border: OutlineInputBorder(
                     //     borderRadius: BorderRadius.circular(10.0)),
                   ),
                 ),
               ),
-              const SizedBox(height: 30.0,),
+              const SizedBox(height: 15.0,),
+              const Text('PLEASE SELECT TRAVEL MODE:',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Color(0xFFba181b),
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.start,),
+              CheckboxListTile(
+                  title: const Text("Request for Ambulance"),
+                  contentPadding: const EdgeInsets.all(0.0),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: requestAmbulance,
+                  onChanged: (value) {
+                    setState(() {
+                      requestAmbulance = value!;
+                      privateVehicle = false;
+                      travelMode = "AMBULANCE";
+                    });
+
+                  }
+              ),
+              CheckboxListTile(
+                  title: const Text("Travel through private vehicle"),
+                  contentPadding: const EdgeInsets.all(0.0),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: privateVehicle,
+                  onChanged: (value) {
+                    setState(() {
+                      privateVehicle = value!;
+                      requestAmbulance = false;
+                      travelMode = "Private Vehicle";
+                    });
+                  }
+              ),
+              const SizedBox(height: 15.0,),
               // add checklist here
               const Text('Instruction: Please check those that are applicable',
                 style: TextStyle(
@@ -612,6 +644,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     //     formController.text.trim(),
                     //     selectedItems.toString(),
                     //   triageResult,
+                    //   travelMode,
                     // );
                   },
                   child: const Text('Submit',

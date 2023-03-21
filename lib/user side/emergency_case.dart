@@ -154,7 +154,7 @@ class _EmergencyCaseState extends State<EmergencyCase>{
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text("Triage Results"),
-          const Text("EMERGENCY CASE",
+          const Text("TESTING PAGE",
               style: TextStyle(
                   fontSize: 25.0,
                   color: Colors.red)
@@ -162,6 +162,7 @@ class _EmergencyCaseState extends State<EmergencyCase>{
           const SizedBox(height: 30.0,),
           const Text("Current Location:"),
           Text(currentAddress),
+          Text(_currentPosition.toString()),
           Text('Latitude = ${_currentPosition?.latitude}'),
           Text('Longitude = ${_currentPosition?.longitude}'),
           RawMaterialButton(
@@ -204,18 +205,6 @@ class _EmergencyCaseState extends State<EmergencyCase>{
     );
   }
 
-  // Widget hospitalWidget(Hospital hospitalList){
-  //   return Container(
-  //     width: MediaQuery.of(context).size.width,
-  //     padding: const EdgeInsets.all(5),
-  //     child: Column(
-  //       children: [
-  //         Text(hospitalList.name),
-  //
-  //       ],
-  //     ),
-  //   );
-  // }
 
 
 

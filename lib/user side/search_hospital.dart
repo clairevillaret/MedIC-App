@@ -78,119 +78,6 @@ class _SearchHospitalState extends State<SearchHospital>{
         body: SafeArea(
           child: Column(
             children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      const Text("Filter by: ",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black54,
-                        ),),
-                      TextButton(
-                        onPressed: (){
-                          filterSelected = 'All';
-                            setState ((){
-                              buttonSelect = const Color(0xFFba181b);
-                            });
-
-                        },
-                        style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all(Colors.white),
-                          // foregroundColor: getColor(Colors.red,Colors.white),
-                          //   backgroundColor: getColor(Colors.white, Colors.red),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("All",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                          filterSelected = 'Nearby';
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Nearby",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          filterSelected = 'Public';
-                          //Query public = dbRef.orderByChild('type').equalTo('public').once() as Query;
-                          //final public = firebaseRef.orderByChild('type').equalTo('public');
-                          //FilterClass(dbRef:dbRef, category: 'public');
-                          //setState ((){
-                          //});
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Public",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                          filterSelected = 'Private';
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Private",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                          filterSelected = 'Availability';
-                        },
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: const BorderSide(color: Color(0xFFba181b))))
-
-                        ),
-                        child: const Text("Availability",
-                          style: TextStyle(
-                            color: Color(0xFFba181b),
-                            fontSize: 18.0,
-                          ),),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               Expanded(
                 child: FirebaseAnimatedList(
                   query: dbRef,
@@ -219,20 +106,7 @@ class _SearchHospitalState extends State<SearchHospital>{
         )
     );
 
-    // MaterialStateProperty<Color> getColor(Color color, Color colorPressed){
-    //   final getColor = (Set<MaterialState> states){
-    //     if (states.contains(MaterialState.pressed)) {
-    //       return colorPressed;
-    //     }else{
-    //       return Color;
-    //     }
-    //   };
-    //   return MaterialStateProperty.resolveWith(getColor);
-    // }
   }
-
-
-
 
 
   Widget customWidget({required Map hospital}){
