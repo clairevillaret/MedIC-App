@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:provider/provider.dart';
-import 'emergency_case.dart';
 import 'saveTriageResults_class.dart';
 
 class ReceiveData extends StatefulWidget {
@@ -14,6 +13,8 @@ class ReceiveData extends StatefulWidget {
 }
 
 class _ReceiveDataState extends State<ReceiveData> {
+
+
   
   @override
   Widget build(BuildContext context) {
@@ -84,6 +85,16 @@ class _ReceiveDataState extends State<ReceiveData> {
                   },
                 ),
               ),
+              const Text("Address:", style: TextStyle(fontSize: 16.0),),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Consumer<SaveTriageResults>(
+                  builder: (context, SaveTriageResults, child) {
+                    return Text(SaveTriageResults.getAddress,
+                      style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),);
+                  },
+                ),
+              ),
               const Text("Main Complaint/s:", style: TextStyle(fontSize: 16.0),),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -135,7 +146,7 @@ class _ReceiveDataState extends State<ReceiveData> {
                     side: const BorderSide(color: Color(0xFFba181b)),
                   ),
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const EmergencyCase()));
+                    //Navigator.push(context, MaterialPageRoute(builder: (context) => const GetUserLocation()));
                   },
                   child: const Text('OKAY',
                     style: TextStyle(

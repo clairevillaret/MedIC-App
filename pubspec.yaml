@@ -39,7 +39,12 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   connectivity_plus: ^3.0.3
   google_maps_flutter: ^2.2.5
+  google_maps_services_dart: ^1.17.1
+  dio: ^4.0.0
   http: ^0.13.5
+  google_directions_api: ^0.9.1
+
+
 
 
 

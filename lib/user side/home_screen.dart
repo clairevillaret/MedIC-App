@@ -1,13 +1,11 @@
 import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:medic/user%20side/ambulance_request.dart';
 import 'package:medic/user%20side/fellowSelf_page.dart';
-import 'package:medic/user%20side/list_hospital.dart';
-import 'package:medic/user%20side/search_hospital.dart';
+import 'package:medic/user%20side/hospital_search.dart';
 import 'package:medic/user%20side/settings.dart';
 
 
@@ -23,22 +21,22 @@ class _HomeScreenState extends State<HomeScreen>{
   bool isDeviceConnected = false;
   bool isAlertSet = false;
 
-  @override
-  void initState() {
-    getConnectivity();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   getConnectivity();
+  //   super.initState();
+  // }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-            (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && isAlertSet == false) {
-            showDialogBox();
-            setState(() => isAlertSet = true);
-          }
-        },
-      );
+  // getConnectivity() =>
+  //     subscription = Connectivity().onConnectivityChanged.listen(
+  //           (ConnectivityResult result) async {
+  //         isDeviceConnected = await InternetConnectionChecker().hasConnection;
+  //         if (!isDeviceConnected && isAlertSet == false) {
+  //           showDialogBox();
+  //           setState(() => isAlertSet = true);
+  //         }
+  //       },
+  //     );
 
   @override
   void dispose() {
@@ -67,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen>{
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchHospital()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSearch()));
                 },
                 icon: const Icon(Icons.search,color: Colors.white,),
               ),

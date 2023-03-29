@@ -5,11 +5,13 @@ import 'package:medic/user%20side/UI%20screens/emergency_result.dart';
 import 'package:medic/user%20side/fellowSelf_page.dart';
 import 'package:medic/user%20side/UI%20screens/non-urgent_result.dart';
 import 'package:medic/user%20side/UI%20screens/priority_result.dart';
-import 'package:medic/user%20side/display_TriageResults.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:provider/provider.dart';
 
 import 'checkbox_class.dart';
+import 'getLocation_class.dart';
+import 'getNearestHospital_class.dart';
+
 
 
 class SelfAutofill extends StatefulWidget {
@@ -36,9 +38,14 @@ class _SelfAutofillState extends State<SelfAutofill>{
   String travelMode = "AMBULANCE";
   String hospitalUserId = "*hospital name*";
   String status = "*pending*";
+  String userID = "";
+  String currentAddress = "";
+  String nearestHospital = "";
+  var position = "";
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
+  bool checkBoxValue = false;
 
   bool checkAll = false;
   bool checkAll2 = false;
@@ -66,6 +73,13 @@ class _SelfAutofillState extends State<SelfAutofill>{
     return listSymptoms.toList();
   }
 
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    addressController.dispose();
+    super.dispose();
+  }
+
   generateTriageResults() {
     if (countEmergency > 0) {
       if (!mounted) return;
@@ -89,9 +103,9 @@ class _SelfAutofillState extends State<SelfAutofill>{
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
     Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(travelMode);
-    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(addressController.text);
-    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(hospitalUserId);
-    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(status);
+    Provider.of<SaveTriageResults>(context, listen: false).saveAddress(currentAddress);
+    Provider.of<SaveTriageResults>(context, listen: false).saveHospitalID(hospitalUserId);
+    Provider.of<SaveTriageResults>(context, listen: false).saveStatus(status);
 
   }
 
@@ -115,7 +129,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
       'Triage Result': triageResult,
       'Travel Mode': travelMode,
       'Age': age,
-      'Address': address,
+      'Address': currentAddress,
       'Hospital User ID': hospitalId,
       'Status': hospitalStatus,
 
@@ -266,46 +280,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: ageController,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Age',
-                                        ),
-                                        validator: (value){
-                                          if(value == null || value.isEmpty){
-                                            return "* Required";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 15.0,),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: 8.0),
-                                        child: DropdownButtonFormField<String>(
-                                          value: selectedSex,
-                                          icon: const Icon(Icons.keyboard_arrow_down),
-                                          items: sex.map((String items) {
-                                            return DropdownMenuItem(
-                                              value: items,
-                                              child: Text(items),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              selectedSex = newValue!;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ],
                             );
                             },
@@ -315,10 +289,52 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     return Text('An error has occurred: ${snapshot.error}');
                   }
               ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: ageController,
+                      decoration: const InputDecoration(
+                        labelText: 'Age',
+                      ),
+                      validator: (value){
+                        if(value == null || value.isEmpty){
+                          return "* Required";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(width: 15.0,),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: DropdownButtonFormField<String>(
+                        value: selectedSex,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: sex.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(items),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedSex = newValue!;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
                 child: TextFormField(
                   controller: addressController,
+                  enabled: !checkBoxValue,
                   decoration: const InputDecoration(
                     labelText: 'Address',
                   ),
@@ -329,6 +345,26 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     return null;
                   },
                 ),
+              ),
+              CheckboxListTile(
+                  title: const Text("Get my device's location"),
+                  contentPadding: const EdgeInsets.all(0.0),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: checkBoxValue,
+                  onChanged: (value) {
+                    setState(() {
+                      checkBoxValue = value!; //checkbox value is true
+                      checkBoxValue
+                     // ? () async { position = GetLocation;
+
+                          ? () async { addressController.text = await GetLocation().determinePosition();
+                      print(addressController.text);}()
+                          : () { addressController.text = addressController.text;
+                      print(addressController.text);}();
+
+
+                    });
+                  }
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
@@ -695,6 +731,12 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     side: const BorderSide(color: Color(0xFFba181b)),
                   ),
                   onPressed: (){
+                    //getNearestHospital(addressController.text);
+                    setState(() {
+                      currentAddress = addressController.text;
+                    });
+                    print(currentAddress);
+
                     generateTriageResults();
                     saveTriageResults();
 
@@ -705,10 +747,11 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     //   triageResult,
                     //   travelMode,
                     //     ageController.text.trim(),
-                    //     addressController.text.trim(),
+                    //     currentAddress,
                     //     hospitalUserId,
                     //     status
                     // );
+
                   },
                   child: const Text('Submit',
                     style: TextStyle(
@@ -728,8 +771,13 @@ class _SelfAutofillState extends State<SelfAutofill>{
     );
   }
 
-
-
+  // getNearestHospital(address) async {
+  //   var hospital = await GetNearestHospital(address).main();
+  //   setState(() {
+  //     nearestHospital = hospital;
+  //   });
+  //   print(nearestHospital);
+  // }
 
 }
 

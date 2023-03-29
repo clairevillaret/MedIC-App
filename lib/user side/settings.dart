@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/home_screen.dart';
+import 'package:medic/user%20side/hospital_search.dart';
 import 'package:medic/user%20side/login_page.dart';
-import 'package:medic/user%20side/search_hospital.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -32,7 +32,7 @@ class _SettingsPageState extends State<SettingsPage>{
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchHospital()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSearch()));
                 },
                 icon: const Icon(Icons.search,color: Colors.white,),
               ),

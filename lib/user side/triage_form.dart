@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:medic/user%20side/getLocation_class.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:medic/user%20side/checkbox_class.dart';
 import 'package:medic/user%20side/fellowSelf_page.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'UI screens/emergency_result.dart';
 import 'UI screens/non-urgent_result.dart';
 import 'UI screens/priority_result.dart';
+import 'getNearestHospital_class.dart';
 
 
 class TriageForm extends StatefulWidget {
@@ -27,14 +29,19 @@ class _TriageFormState extends State<TriageForm> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+
   List<String> sex = ['*Select sex*','Male','Female'];
   String selectedSex = '*Select sex*';
   String travelMode = "AMBULANCE";
   String hospitalUserId = "*hospital name*";
   String status = "*pending*";
+  String userID = "";
+  String currentAddress = "";
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
+  bool checkBoxValue = false;
+
 
   bool checkAll = false;
   bool checkAll2 = false;
@@ -85,10 +92,10 @@ class _TriageFormState extends State<TriageForm> {
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
     Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(travelMode);
-    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(bdayController.text);
-    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(addressController.text);
-    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(hospitalUserId);
-    Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(status);
+    Provider.of<SaveTriageResults>(context, listen: false).saveBirthdate(bdayController.text);
+    Provider.of<SaveTriageResults>(context, listen: false).saveAddress(currentAddress);
+    Provider.of<SaveTriageResults>(context, listen: false).saveHospitalID(hospitalUserId);
+    Provider.of<SaveTriageResults>(context, listen: false).saveStatus(status);
 
 
   }
@@ -118,8 +125,9 @@ class _TriageFormState extends State<TriageForm> {
       'Address': address,
       'Hospital User ID': hospitalId,
       'Status': hospitalStatus,
+    }).then((value) => userID = value.id);
+    print(userID);
 
-    });
   }
 
   @override
@@ -170,11 +178,16 @@ class _TriageFormState extends State<TriageForm> {
     });
     Future.delayed(Duration.zero,(){
       Provider.of<SaveTriageResults>(context, listen: false).symptoms = selectedItems;
+
     });
     toListSymptoms();
     super.initState();
   }
 
+  // Future selectHospital(userAddress) async {
+  //   var nearestHospital = await GetNearestHospital(userAddress).main();
+  //   print(nearestHospital.toString());
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -291,6 +304,7 @@ class _TriageFormState extends State<TriageForm> {
                   padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
                   child: TextFormField(
                     controller: addressController,
+                    enabled: !checkBoxValue,
                     decoration: const InputDecoration(
                       labelText: 'Address',
                     ),
@@ -301,6 +315,23 @@ class _TriageFormState extends State<TriageForm> {
                       return null;
                     },
                   ),
+                ),
+                CheckboxListTile(
+                    title: const Text("Get my device's location"),
+                    contentPadding: const EdgeInsets.all(0.0),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: checkBoxValue,
+                    onChanged: (value) {
+                      setState(() {
+                        checkBoxValue = value!;
+                        checkBoxValue
+                            ? () async { addressController.text = await GetLocation().determinePosition();
+                        print(addressController.text);}()
+                            : () { addressController.text = addressController.text;
+                        print(addressController.text);}();
+
+                      });
+                    }
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 0.0, top: 9.0, right: 0.0, bottom: 8.0),
@@ -670,6 +701,11 @@ class _TriageFormState extends State<TriageForm> {
                     ),
                     onPressed: (){
                       if (_formKey.currentState!.validate()){
+                        setState(() {
+                          currentAddress = addressController.text;
+                        });
+                        print(currentAddress);
+
                         generateTriageResults();
                         saveTriageResults();
 
@@ -682,10 +718,13 @@ class _TriageFormState extends State<TriageForm> {
                         //   triageResult,
                         //   travelMode,
                         //   bdayController.text.trim(),
-                        //   addressController.text.trim(),
+                        //   currentAddress,
                         //   hospitalUserId,
                         //   status,
                         // );
+
+                        // selectHospital(addressController.text);
+
                       }
                     },
                     child: const Text('Submit',
@@ -705,4 +744,5 @@ class _TriageFormState extends State<TriageForm> {
       )
     );
   }
+
 }

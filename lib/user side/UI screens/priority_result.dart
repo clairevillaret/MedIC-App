@@ -40,7 +40,7 @@ class _PriorityResultState extends State<PriorityResult> {
           body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
-              //height: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               margin: const EdgeInsets.all(30),
               padding: const EdgeInsets.all(30),
               decoration: BoxDecoration(

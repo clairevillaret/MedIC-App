@@ -6,8 +6,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:medic/user%20side/UI%20screens/emergency_result.dart';
 import 'package:medic/user%20side/UI%20screens/non-urgent_result.dart';
 import 'package:medic/user%20side/fetch_database.dart';
+import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:medic/user%20side/triage_form.dart';
 import 'dart:math';
+
+import 'package:provider/provider.dart';
 
 
 class EmergencyCase extends StatefulWidget {
@@ -19,25 +22,11 @@ class EmergencyCase extends StatefulWidget {
 }
 
 class _EmergencyCaseState extends State<EmergencyCase>{
-  DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('hospitals');
-
-  List<Hospital> hospitalList = [];
-  final Map<String, double> hospitalMap = {};
-  var distances = [];
 
   String currentAddress = 'My Address';
   Position? _currentPosition;
 
   String nearestHospital = 'Nearest Hospital';
-
-  @override
-  void initState() {
-    determinePosition();
-    retrieveHospitalData();
-    getDistance();
-    showConnection();
-    super.initState();
-  }
 
   Future<Position> determinePosition() async {
     bool serviceEnabled;
@@ -74,88 +63,17 @@ class _EmergencyCaseState extends State<EmergencyCase>{
         "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";
 
       });
+      print(currentAddress);
     }catch(e) {
       print(e);
     }
     throw '';
   }
-
-  retrieveHospitalData() async {
-    final snapshot = await FirebaseDatabase.instance.ref('hospitals').get();
-    final map = snapshot.value as Map<dynamic, dynamic>;
-    map.forEach((key, value) {
-      final hospital = Hospital.fromMap(value);
-      hospitalList.add(hospital);
-      setState(() {});
-    });
-  }
-
-  getDistance() async {
-    Position currentUserPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    setState(() {
-      _currentPosition = currentUserPosition;
-    });
-
-    for(int i = 0 ; i < hospitalList.length ; i++){
-      double storedLat = hospitalList[i].latitude;
-      double storedLong = hospitalList[i].longitude;
-
-      var distance = Geolocator.distanceBetween(
-          _currentPosition!.latitude, _currentPosition!.longitude, storedLat, storedLong);
-
-      hospitalMap.addAll({hospitalList[i].name:distance});
-
-    }
-    debugPrint(hospitalMap.toString());
-
-    var nearest = hospitalMap.values.cast<num>().reduce(min);
-
-    hospitalMap.forEach((key, value){
-      if(value == nearest){
-        //debugPrint(key);
-        setState(() {
-          nearestHospital = key;
-        });
-      }
-    });
-  }
-
-  // getTimeTravel() async {
-  //   ByRoadDistanceCalculator distance = ByRoadDistanceCalculator();
-  //
-  //
-  //   var distance = await distance.getDistance('YOUR API KEY',
-  //       startLatitude,
-  //       startLongitude,
-  //       destinationLatitude,
-  //       destinationLongitude,
-  //       travelMode: TravelModes.bicycling);
-  // }
-
-
-
-  Future showConnection() async {
-    await Future.delayed(const Duration(seconds: 3));
-
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("We will send you to $nearestHospital ",
-          style: const TextStyle(
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-          ),),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("OK",
-                style: TextStyle(fontSize: 25.0),))
-          ],
-        ));
+  
+  @override
+  void initState() {
+    determinePosition();
+    super.initState();
   }
 
   @override

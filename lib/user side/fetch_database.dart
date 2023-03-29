@@ -13,8 +13,9 @@ class Hospital{
   factory Hospital.fromMap(Map<dynamic, dynamic> map) {
     return Hospital(
       name: map['name'] ?? '',
-      latitude: map['latitude'] ?? '',
+      latitude: map['latitude'] ?? '',    //this is from real time database
       longitude: map['longitude'] ?? '',
     );
   }
+
 }

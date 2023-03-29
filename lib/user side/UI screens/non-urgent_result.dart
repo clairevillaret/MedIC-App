@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medic/user%20side/emergency_case.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/self_page.dart';
 
@@ -41,7 +40,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
           body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
-              //height: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               margin: const EdgeInsets.all(30),
               padding: const EdgeInsets.all(30),
               decoration: BoxDecoration(

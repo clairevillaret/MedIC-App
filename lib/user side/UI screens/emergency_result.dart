@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:medic/user%20side/UI%20screens/priority_result.dart';
-import 'package:medic/user%20side/emergency_case.dart';
+import 'package:medic/user%20side/getNearestHospital_class.dart';
 import 'package:medic/user%20side/home_screen.dart';
-import 'package:medic/user%20side/select_hospital.dart';
+import 'package:medic/user%20side/hospital_select.dart';
 import 'package:medic/user%20side/self_page.dart';
-import 'package:medic/user%20side/send_hospitalRequest.dart';
-import '../notification_service.dart';
-import '../recieveData_page.dart';
+import 'package:medic/user%20side/userHospital_selection.dart';
+import 'package:provider/provider.dart';
+
+import '../saveTriageResults_class.dart';
+
 
 class EmergencyResult extends StatefulWidget {
   const EmergencyResult({Key? key}) : super(key: key);
@@ -16,24 +17,26 @@ class EmergencyResult extends StatefulWidget {
 }
 
 class _EmergencyResultState extends State<EmergencyResult> {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: "Main Navigator");
-  late final LocalNotificationService service;
+  var userAddress = "";
+  var nearestHospital = "";
 
-    @override
-    void initState() {
-      service = LocalNotificationService();
-      service.init();
-      listenToNotification();
-      super.initState();
-    }
+  getNearestHospital(address) async {
+    print("check1 $address");
+    var hospital = await GetNearestHospital(address).main();
+    print(hospital);
+    print(address);
+    setState(()  {
+      nearestHospital = hospital;
+    });
+    print("nearest hospital: $nearestHospital");
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey,
-      routes: {
-        '/navigationPage' :(context)=>const PriorityResult()
-      },
       home: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
@@ -133,15 +136,16 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       borderRadius: BorderRadius.circular(20.0),
                       side: const BorderSide(color: Color(0xFFba181b)),
                     ),
-                    onPressed: () async {
-                      //if (_formKey.currentState!.validate()){
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => const SendHospitalRequest()));
-                      //}
-                      await service.showNotificationWithPayload(
-                          id: 0,
-                          title: 'Patient Information',
-                          body: 'See information',
-                          payload: 'Accept Request');
+                    onPressed: () {
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => const UserHospitalSelection()));
+                      //var hospital = await GetNearestHospital(userAddress).main();
+                      setState(() {
+                        userAddress = context.read<SaveTriageResults>().getAddress;
+                        //nearestHospital = hospital;
+                      });
+                      print(userAddress);
+                      //print(nearestHospital);
+                      getNearestHospital(userAddress);
 
                     },
                     child: const Text('SELECT NEAREST HOSPITAL',
@@ -163,7 +167,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     ),
                     onPressed: (){
                       //if (_formKey.currentState!.validate()){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectHospital()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSelect()));
                       //}
                     },
                     child: const Text('SELECT HOSPITAL',
@@ -198,16 +202,5 @@ class _EmergencyResultState extends State<EmergencyResult> {
     );
   }
 
-  void listenToNotification() =>
-      service.onNotificationClick.stream.listen(onNotificationListener);
 
-  Future<void> onNotificationListener(String? payload) async {
-    if (payload != null && payload.isNotEmpty) {
-      navigatorKey.currentState?.push( MaterialPageRoute( builder: (context) => ReceiveData(payload: payload,)));
-      print('payload $payload');
-
-    }else{
-      print('payload empty');
-    }
-  }
 }

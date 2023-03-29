@@ -13,6 +13,7 @@ class SaveTriageResults extends ChangeNotifier {
   String travelMode = "";
   String hospitalId = "";
   String status = "";
+  String userId = "";
   List<String> symptoms = [];
 
 
@@ -28,6 +29,8 @@ class SaveTriageResults extends ChangeNotifier {
   String get getTravelMode => travelMode;
   String get getHospitalId => hospitalId;
   String get getStatus => status;
+  String get getUserId => userId;
+
 
 
   void addSymptom(String name) {
@@ -91,6 +94,11 @@ class SaveTriageResults extends ChangeNotifier {
 
   void saveStatus(String kind) {
     status = kind;
+    notifyListeners();
+  }
+
+  void saveUserId(String id){
+    userId = id;
     notifyListeners();
   }
 
