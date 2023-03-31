@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:medic/user%20side/getLocation_class.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:medic/user%20side/checkbox_class.dart';
@@ -8,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'UI screens/emergency_result.dart';
 import 'UI screens/non-urgent_result.dart';
 import 'UI screens/priority_result.dart';
-import 'getNearestHospital_class.dart';
+
 
 
 class TriageForm extends StatefulWidget {
@@ -29,18 +31,20 @@ class _TriageFormState extends State<TriageForm> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-
   List<String> sex = ['*Select sex*','Male','Female'];
   String selectedSex = '*Select sex*';
   String travelMode = "AMBULANCE";
   String hospitalUserId = "*hospital name*";
   String status = "*pending*";
-  String userID = "";
   String currentAddress = "";
+  Position? userLocation;
+  double? userLat;
+  double? userLong;
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
   bool checkBoxValue = false;
+  bool deviceLocation = false;
 
 
   bool checkAll = false;
@@ -73,7 +77,7 @@ class _TriageFormState extends State<TriageForm> {
     if (countEmergency > 0) {
       if (!mounted) return;
       triageResult = "Emergency Case";
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const EmergencyResult()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => EmergencyResult(deviceLocation: deviceLocation)));
     } else if (countEmergency == 0 && countPriority > 0){
       if (!mounted) return;
       triageResult = "Priority Case";
@@ -96,7 +100,8 @@ class _TriageFormState extends State<TriageForm> {
     Provider.of<SaveTriageResults>(context, listen: false).saveAddress(currentAddress);
     Provider.of<SaveTriageResults>(context, listen: false).saveHospitalID(hospitalUserId);
     Provider.of<SaveTriageResults>(context, listen: false).saveStatus(status);
-
+    Provider.of<SaveTriageResults>(context, listen: false).saveUserLatitude(userLat.toString());
+    Provider.of<SaveTriageResults>(context, listen: false).saveUserLongitude(userLong.toString());
 
   }
 
@@ -112,6 +117,8 @@ class _TriageFormState extends State<TriageForm> {
       String address,
       String hospitalId,
       String hospitalStatus,
+      String latitude,
+      String longitude,
       ) async {
     await FirebaseFirestore.instance.collection('hospitals_patients').add({
       'Name': name,
@@ -125,8 +132,13 @@ class _TriageFormState extends State<TriageForm> {
       'Address': address,
       'Hospital User ID': hospitalId,
       'Status': hospitalStatus,
-    }).then((value) => userID = value.id);
-    print(userID);
+      'Location' : {
+        'Latitude' : userLat.toString(),
+        'Longitude': userLong.toString(),
+      }
+    }).then((value) {
+      Provider.of<SaveTriageResults>(context, listen: false).saveUserId(value.id);
+    });
 
   }
 
@@ -184,10 +196,6 @@ class _TriageFormState extends State<TriageForm> {
     super.initState();
   }
 
-  // Future selectHospital(userAddress) async {
-  //   var nearestHospital = await GetNearestHospital(userAddress).main();
-  //   print(nearestHospital.toString());
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -325,10 +333,12 @@ class _TriageFormState extends State<TriageForm> {
                       setState(() {
                         checkBoxValue = value!;
                         checkBoxValue
-                            ? () async { addressController.text = await GetLocation().determinePosition();
-                        print(addressController.text);}()
-                            : () { addressController.text = addressController.text;
-                        print(addressController.text);}();
+                            ? () async { deviceLocation = true; userLocation = await GetLocation().determinePosition();
+                          //getAddress(userLocation?.latitude, userLocation?.longitude);
+                        }()
+                            : () { deviceLocation = false; addressController.text = addressController.text;
+                          //getCoordinates(addressController.text);
+                        }();
 
                       });
                     }
@@ -699,33 +709,41 @@ class _TriageFormState extends State<TriageForm> {
                       borderRadius: BorderRadius.circular(12.0),
                       side: const BorderSide(color: Color(0xFFba181b)),
                     ),
-                    onPressed: (){
-                      if (_formKey.currentState!.validate()){
+                    onPressed: () async {
+                      //if (_formKey.currentState!.validate()){
                         setState(() {
                           currentAddress = addressController.text;
+                          userLat =  userLocation?.latitude;
+                          userLong = userLocation?.longitude;
                         });
-                        print(currentAddress);
+
+                        if (deviceLocation){
+                          currentAddress = await getAddress(userLat, userLong);
+                        }else{
+                          userLat = await getLatitude(currentAddress);
+                          userLong = await getLongitude(currentAddress);
+                        }
 
                         generateTriageResults();
                         saveTriageResults();
 
-                        // saveFellowResults(
-                        //     nameController.text.trim(),
-                        //     ageController.text.toString(),
-                        //     selectedSex,
-                        //   formController.text.trim(),
-                        //   selectedItems.toString(),
-                        //   triageResult,
-                        //   travelMode,
-                        //   bdayController.text.trim(),
-                        //   currentAddress,
-                        //   hospitalUserId,
-                        //   status,
-                        // );
+                        saveFellowResults(
+                            nameController.text.trim(),
+                            ageController.text.toString(),
+                            selectedSex,
+                          formController.text.trim(),
+                          selectedItems.toString(),
+                          triageResult,
+                          travelMode,
+                          bdayController.text.trim(),
+                          currentAddress,
+                          hospitalUserId,
+                          status,
+                          userLat.toString(),
+                        userLong.toString(),
+                        );
 
-                        // selectHospital(addressController.text);
 
-                      }
                     },
                     child: const Text('Submit',
                       style: TextStyle(
@@ -744,5 +762,35 @@ class _TriageFormState extends State<TriageForm> {
       )
     );
   }
+
+  getLatitude(address) async {
+    List<Location> locations = await locationFromAddress(address);
+    setState(() {
+      userLat = locations.first.latitude;
+    });
+    print(userLat);
+    return userLat;
+  }
+
+  getLongitude(address) async {
+    List<Location> locations = await locationFromAddress(address);
+    setState(() {
+      userLong = locations.first.longitude;
+    });
+    print(userLong);
+    return userLong;
+  }
+
+  getAddress(lat, long) async {
+    List<Placemark> placeMarks = await placemarkFromCoordinates(lat, long);
+    Placemark place = placeMarks[0];
+    setState(() {
+      currentAddress =
+      "${place.name}, ${place.street}, ${place.locality}, ${place.postalCode}, ${place.administrativeArea}, ${place.country}";
+    });
+    print(currentAddress);
+    return currentAddress.toString();
+  }
+
 
 }

@@ -3,10 +3,11 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GetLocation{
+
   String currentAddress = '';
   Position? currentPosition;
 
-  Future<String> determinePosition() async {
+  Future determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -28,23 +29,29 @@ class GetLocation{
           msg:
           'Location permissions are permanently denied, we cannot request permissions.');
     }
+
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+
 
     try{
       List<Placemark> placeMarks = await placemarkFromCoordinates(position.latitude, position.longitude);
       Placemark place = placeMarks[0];
 
+
       currentPosition = position;
       currentAddress =
-        "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";
+      "${place.name}, ${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
 
       //print("getLocation $currentAddress");
-      print(currentPosition);
-      return(currentAddress);
+      //print("get location file $currentPosition");
+      return(currentPosition);
     }catch(e) {
       print(e);
     }
+
     throw '';
   }
+
+
 }

@@ -1,37 +1,37 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:medic/user%20side/getNearestHospital_class.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:medic/user%20side/auto_get_hospital.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/hospital_select.dart';
 import 'package:medic/user%20side/self_page.dart';
 import 'package:medic/user%20side/userHospital_selection.dart';
 import 'package:provider/provider.dart';
 
+import '../manual_get_hospital.dart';
 import '../saveTriageResults_class.dart';
 
 
 class EmergencyResult extends StatefulWidget {
-  const EmergencyResult({Key? key}) : super(key: key);
+  final bool deviceLocation;
+
+  const EmergencyResult({Key? key, required this.deviceLocation}) : super(key: key);
 
   @override
   State<EmergencyResult> createState() => _EmergencyResultState();
 }
 
 class _EmergencyResultState extends State<EmergencyResult> {
-  var userAddress = "";
-  var nearestHospital = "";
+  String userAddress = "";
+  String nearestHospital = "";
+  String userLat = "";
+  String userLong = "";
+  String userID = "";
 
-  getNearestHospital(address) async {
-    print("check1 $address");
-    var hospital = await GetNearestHospital(address).main();
-    print(hospital);
-    print(address);
-    setState(()  {
-      nearestHospital = hospital;
-    });
-    print("nearest hospital: $nearestHospital");
+  saveHospital(hospital) async{
+    FirebaseFirestore.instance.collection('hospitals_patients').doc(userID).update({"Hospital User ID": hospital});
+    print("emergency result page saved: $userID");
   }
-
-
 
 
   @override
@@ -128,6 +128,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 50.0,),
+                  //Text(widget.userId),
                   RawMaterialButton(
                     fillColor: const Color(0xFFba181b),
                     elevation: 0.0,
@@ -136,16 +137,26 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       borderRadius: BorderRadius.circular(20.0),
                       side: const BorderSide(color: Color(0xFFba181b)),
                     ),
-                    onPressed: () {
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => const UserHospitalSelection()));
-                      //var hospital = await GetNearestHospital(userAddress).main();
+                    onPressed: () async {
+
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => const GetNearestHospital(startLat: userLat, startLong: startLong)));
+                      //userAddress = context.read<SaveTriageResults>().userLatitude;
+
+                      if (widget.deviceLocation == true){
+                        userLat = context.read<SaveTriageResults>().userLatitude;
+                        userLong = context.read<SaveTriageResults>().userLongitude;
+                        nearestHospital = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
+                        print("nearest hospital: $nearestHospital");
+                      }else{
+                        userAddress = context.read<SaveTriageResults>().userAddress;
+                        nearestHospital = await ManualGetHospital(userAddress).main();
+                        print("nearest hospital: $nearestHospital");
+                      }
+
                       setState(() {
-                        userAddress = context.read<SaveTriageResults>().getAddress;
-                        //nearestHospital = hospital;
+                        userID = context.read<SaveTriageResults>().userId;
                       });
-                      print(userAddress);
-                      //print(nearestHospital);
-                      getNearestHospital(userAddress);
+                      saveHospital(nearestHospital);
 
                     },
                     child: const Text('SELECT NEAREST HOSPITAL',

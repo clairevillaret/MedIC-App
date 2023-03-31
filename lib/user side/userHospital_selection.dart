@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:medic/user%20side/getNearestHospital_class.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:provider/provider.dart';
 
@@ -18,19 +17,9 @@ class _UserHospitalSelectionState extends State<UserHospitalSelection> {
   @override
   void initState() {
     //address = context.read<SaveTriageResults>().getAddress;
-    getNearestHospital();
     super.initState();
 
   }
-
-  getNearestHospital() {
-    setState(() async {
-      nearestHospital = await GetNearestHospital(address).main();
-    });
-    print(nearestHospital);
-  }
-
-
 
 
 
@@ -63,8 +52,11 @@ class _UserHospitalSelectionState extends State<UserHospitalSelection> {
               },
             ),
           ),
-          Container(
-
+          TextButton(
+              onPressed: () {
+                //GetNearestHospital("mandurriao").getCoordinates();
+              },
+              child: const Text("Testing"),
           )
 
 

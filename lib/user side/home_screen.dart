@@ -21,22 +21,22 @@ class _HomeScreenState extends State<HomeScreen>{
   bool isDeviceConnected = false;
   bool isAlertSet = false;
 
-  // @override
-  // void initState() {
-  //   getConnectivity();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    getConnectivity();
+    super.initState();
+  }
 
-  // getConnectivity() =>
-  //     subscription = Connectivity().onConnectivityChanged.listen(
-  //           (ConnectivityResult result) async {
-  //         isDeviceConnected = await InternetConnectionChecker().hasConnection;
-  //         if (!isDeviceConnected && isAlertSet == false) {
-  //           showDialogBox();
-  //           setState(() => isAlertSet = true);
-  //         }
-  //       },
-  //     );
+  getConnectivity() =>
+      subscription = Connectivity().onConnectivityChanged.listen(
+            (ConnectivityResult result) async {
+          isDeviceConnected = await InternetConnectionChecker().hasConnection;
+          if (!isDeviceConnected && isAlertSet == false) {
+            showDialogBox();
+            setState(() => isAlertSet = true);
+          }
+        },
+      );
 
   @override
   void dispose() {

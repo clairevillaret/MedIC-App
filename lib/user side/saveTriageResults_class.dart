@@ -14,6 +14,8 @@ class SaveTriageResults extends ChangeNotifier {
   String hospitalId = "";
   String status = "";
   String userId = "";
+  String userLatitude = "";
+  String userLongitude = "";
   List<String> symptoms = [];
 
 
@@ -30,6 +32,8 @@ class SaveTriageResults extends ChangeNotifier {
   String get getHospitalId => hospitalId;
   String get getStatus => status;
   String get getUserId => userId;
+  String get getUserLat => userLatitude;
+  String get getUserLong => userLongitude;
 
 
 
@@ -99,6 +103,16 @@ class SaveTriageResults extends ChangeNotifier {
 
   void saveUserId(String id){
     userId = id;
+    notifyListeners();
+  }
+
+  void saveUserLatitude(String latitude){
+    userLatitude = latitude;
+    notifyListeners();
+  }
+
+  void saveUserLongitude(String longitude){
+    userLongitude = longitude;
     notifyListeners();
   }
 
