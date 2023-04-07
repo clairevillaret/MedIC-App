@@ -4,9 +4,12 @@ import 'package:medic/user%20side/UI%20screens/confirm_arrival.dart';
 import 'package:medic/user%20side/UI%20screens/privateVehicle_option.dart';
 import 'package:medic/user%20side/chat_room.dart';
 
+import '../home_screen.dart';
+
 
 class ConnectedToParamedic extends StatefulWidget {
-  const ConnectedToParamedic({Key? key}) : super(key: key);
+  final String hospital;
+  const ConnectedToParamedic({Key? key, required this.hospital}) : super(key: key);
 
   @override
   State<ConnectedToParamedic> createState() => _ConnectedToParamedicState();
@@ -66,8 +69,8 @@ class _ConnectedToParamedicState extends State<ConnectedToParamedic> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 90,
-                    width: 90,
+                    height: 60,
+                    width: 60,
                     decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('images/red_check.png',
@@ -76,24 +79,16 @@ class _ConnectedToParamedicState extends State<ConnectedToParamedic> {
                     ),
                   ),
                   const SizedBox(height: 18.0,),
-                  const Text("You are now connected to a paramedic.",
-                    style: TextStyle(
-                      color: Color(0xFFba181b),
+                  Text("${widget.hospital} will accommodate you/the patient.",
+                    style: const TextStyle(
+                      color: Colors.black,
                       fontSize: 25.0,
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30.0,),
-                  const Text("DO NOT CLOSE THE APPLICATION UNTIL AMBULANCE HAS ARRIVED",
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      decoration: TextDecoration.underline,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 70.0,),
-                  const Text("The ambulance is coming. \nYou can send them a message!",
+                  const Text("An ambulance is coming for you. Please wait shortly for their arrival",
                     style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.black54,
@@ -101,7 +96,7 @@ class _ConnectedToParamedicState extends State<ConnectedToParamedic> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 25.0,),
+                  const SizedBox(height: 50.0,),
                   RawMaterialButton(
                     fillColor: Colors.white,
                     elevation: 0.0,
@@ -111,9 +106,9 @@ class _ConnectedToParamedicState extends State<ConnectedToParamedic> {
                       side: const BorderSide(color: Colors.green, width: 2.0),
                     ),
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ConfirmArrival()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
                     },
-                    child: const Text('MESSAGE',
+                    child: const Text('CONFIRM ARRIVAL',
                       style: TextStyle(
                         color: Colors.green,
                         fontSize: 16.0,
@@ -121,6 +116,14 @@ class _ConnectedToParamedicState extends State<ConnectedToParamedic> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 20.0,),
+                  const Text("Please confirm if the ambulance has arrived. Confirming will exit you from the application.",
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 20.0
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

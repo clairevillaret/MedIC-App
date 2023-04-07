@@ -35,7 +35,7 @@ class _TriageFormState extends State<TriageForm> {
   String selectedSex = '*Select sex*';
   String travelMode = "AMBULANCE";
   String hospitalUserId = "*hospital name*";
-  String status = "*pending*";
+  String status = "pending";
   String currentAddress = "";
   Position? userLocation;
   double? userLat;

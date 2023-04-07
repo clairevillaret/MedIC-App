@@ -125,7 +125,7 @@ class _AmbulanceRequestState extends State<AmbulanceRequest> {
                       side: const BorderSide(color: Color(0xFFba181b), width: 1.0),
                     ),
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ConnectedToParamedic()));
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => const ConnectedToParamedic()));
                     },
                     child: const Text('NO, THANK YOU',
                       style: TextStyle(

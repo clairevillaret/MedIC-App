@@ -46,7 +46,7 @@ class AutoGetHospital{
   }
 
 
-  Future<String> main() async {
+  Future<Map<String, dynamic>> main() async {
     var data = await FirebaseFirestore.instance.collection('hospitals').get();
     for (var document in data.docs) {
       Map<String, dynamic> data = document.data();
@@ -73,7 +73,7 @@ class AutoGetHospital{
     });
     //print(hospitalMap);
     //print(nearestHospital);
-    return nearestHospital;
+    return hospitalMap;
   }
 
 }

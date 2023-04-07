@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:medic/user%20side/display_manual_hospital.dart';
+import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:medic/user%20side/show_availability.dart';
+import 'package:provider/provider.dart';
 
 class HospitalSelect extends StatefulWidget {
   const HospitalSelect({Key? key}) : super(key: key);
@@ -13,13 +16,46 @@ class _HospitalSelectState extends State<HospitalSelect> {
   final CollectionReference hospitals = FirebaseFirestore.instance.collection('hospitals');
 
   TextEditingController searchController = TextEditingController();
+  String selectedHospital = "";
+  String userID = "";
 
+  createDocument(hospital) async {
+    String name = context.read<SaveTriageResults>().userName;
+    String birthday = context.read<SaveTriageResults>().userBirthday;
+    String age = context.read<SaveTriageResults>().userAge;
+    String sex = context.read<SaveTriageResults>().userSex;
+    String address = context.read<SaveTriageResults>().userAddress;
+    String mainConcern = context.read<SaveTriageResults>().mainConcern;
+    List symptoms = context.read<SaveTriageResults>().symptoms;
+    String triageCategory = context.read<SaveTriageResults>().triageCategory;
+    String travelMode = context.read<SaveTriageResults>().travelMode;
+    String status = context.read<SaveTriageResults>().status;
+    String userLat = context.read<SaveTriageResults>().userLatitude;
+    String userLong = context.read<SaveTriageResults>().userLongitude;
 
-  @override
-  void initState() {
-    super.initState();
+    await FirebaseFirestore.instance.collection('hospitals_patients').add({
+      'Name:': name,
+      'Birthday': birthday,
+      'Sex': sex,
+      'Main Concerns': mainConcern,
+      'Symptoms': symptoms.toList(),
+      'Triage Result': triageCategory,
+      'Travel Mode': travelMode,
+      'Age': age,
+      'Address': address,
+      'Hospital User ID': hospital,
+      'Status': status,
+      'Location' : {
+        'Latitude' : userLat.toString(),
+        'Longitude': userLong.toString(),
+      }
+    }).then((value) {
+      //Provider.of<SaveTriageResults>(context, listen: false).saveUserId(value.id);
+      userID = value.id;
+      print(userID);
+    });
+    return userID;
   }
-
 
 
   @override
@@ -191,13 +227,22 @@ class _HospitalSelectState extends State<HospitalSelect> {
                         ),),
                       actions: [
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            selectedHospital = documentSnapshot['Name'];
+
+                            print(selectedHospital);
+                            userID = await createDocument(selectedHospital);
+
+                            if (!mounted) return;
+                            Navigator.of(context).pop();
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ManualDisplayHospital(currentHospital:selectedHospital, userID: userID,)));
+                          },
                           child: const Text("YES",
                             style: TextStyle(fontSize: 25.0),),
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.of(context).pop();
                           },
                           child: const Text("NO",
                             style: TextStyle(fontSize: 25.0),),

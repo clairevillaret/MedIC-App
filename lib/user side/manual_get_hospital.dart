@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 
 class ManualGetHospital {
-  late final String currentAddress;
+  final String currentAddress;
   ManualGetHospital(this.currentAddress);
 
   final CollectionReference hospitals = FirebaseFirestore.instance.collection('hospitals');
@@ -42,7 +42,7 @@ class ManualGetHospital {
   }
 
 
-  Future<String> main() async {
+  Future<Map<String, dynamic>> main() async {
     var data = await FirebaseFirestore.instance.collection('hospitals').get();
     for (var document in data.docs) {
       Map<String, dynamic> data = document.data();
@@ -63,7 +63,8 @@ class ManualGetHospital {
       }
     });
     //print(nearestHospital);
-    return nearestHospital;
+    // return nearestHospital;
+    return hospitalMap;
   }
 
 }

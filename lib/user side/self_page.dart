@@ -37,7 +37,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
   String selectedSex = '*Select sex*';
   String travelMode = "AMBULANCE";
   String hospitalUserId = "*hospital name*";
-  String status = "*pending*";
+  String status = "pending";
   String currentAddress = "";
   Position? userLocation;
   double? userLat;
@@ -98,7 +98,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
 
   saveTriageResults(){
     Provider.of<SaveTriageResults>(context, listen: false).saveName(userName);
-    Provider.of<SaveTriageResults>(context, listen: false).saveAge(userBirthday);
+    Provider.of<SaveTriageResults>(context, listen: false).saveBirthdate(userBirthday);
     Provider.of<SaveTriageResults>(context, listen: false).saveAge(ageController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveSex(selectedSex);
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
@@ -367,7 +367,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                         checkBoxValue = value!; //checkbox value is true
                         checkBoxValue
                             ? () async { deviceLocation = true; userLocation = await GetLocation().determinePosition();
-                        //getAddress(userLocation?.latitude, userLocation?.longitude);
+                          //getAddress(userLocation?.latitude, userLocation?.longitude);
                         }()
                             : () { deviceLocation = false; addressController.text = addressController.text;
                           //getCoordinates(addressController.text);
@@ -757,19 +757,19 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       generateTriageResults();
                       saveTriageResults();
 
-                      saveUserResults(
-                          selectedSex,
-                          formController.text.trim(),
-                          selectedItems.toString(),
-                        triageResult,
-                        travelMode,
-                          ageController.text.trim(),
-                          currentAddress,
-                          hospitalUserId,
-                          status,
-                          userLat.toString(),
-                        userLong.toString(),
-                      );
+                      // saveUserResults(
+                      //     selectedSex,
+                      //     formController.text.trim(),
+                      //     selectedItems.toString(),
+                      //   triageResult,
+                      //   travelMode,
+                      //     ageController.text.trim(),
+                      //     currentAddress,
+                      //     hospitalUserId,
+                      //     status,
+                      //     userLat.toString(),
+                      //   userLong.toString(),
+                      // );
 
 
                     },
