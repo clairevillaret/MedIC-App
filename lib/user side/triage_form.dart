@@ -81,10 +81,10 @@ class _TriageFormState extends State<TriageForm> {
     } else if (countEmergency == 0 && countPriority > 0){
       if (!mounted) return;
       triageResult = "Priority Case";
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityResult()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityResult(deviceLocation: deviceLocation)));
     } else {
       triageResult = "Non-urgent Case";
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const NonUrgentResult()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NonUrgentResult(deviceLocation: deviceLocation)));
     }
 
   }
@@ -105,42 +105,6 @@ class _TriageFormState extends State<TriageForm> {
 
   }
 
-  Future saveFellowResults(
-      String name,
-      String age,
-      String sex,
-      String mainConcerns,
-      String symptoms,
-      String result,
-      String travel,
-      String birthday,
-      String address,
-      String hospitalId,
-      String hospitalStatus,
-      String latitude,
-      String longitude,
-      ) async {
-    await FirebaseFirestore.instance.collection('hospitals_patients').add({
-      'Name': name,
-      'Age': age,
-      'Sex': sex,
-      'Main Concerns': mainConcerns,
-      'Symptoms': toListSymptoms(),
-      'Triage Result': triageResult,
-      'Travel Mode': travelMode,
-      'Birthdate': birthday,
-      'Address': address,
-      'Hospital User ID': hospitalId,
-      'Status': hospitalStatus,
-      'Location' : {
-        'Latitude' : userLat.toString(),
-        'Longitude': userLong.toString(),
-      }
-    }).then((value) {
-      Provider.of<SaveTriageResults>(context, listen: false).saveUserId(value.id);
-    });
-
-  }
 
   @override
   void initState() {
@@ -711,38 +675,21 @@ class _TriageFormState extends State<TriageForm> {
                     ),
                     onPressed: () async {
                       //if (_formKey.currentState!.validate()){
-                        setState(() {
-                          currentAddress = addressController.text;
-                          userLat =  userLocation?.latitude;
-                          userLong = userLocation?.longitude;
-                        });
+                      setState(() {
+                        currentAddress = addressController.text;
+                        userLat =  userLocation?.latitude;
+                        userLong = userLocation?.longitude;
+                      });
 
-                        if (deviceLocation){
-                          currentAddress = await getAddress(userLat, userLong);
-                        }else{
-                          userLat = await getLatitude(currentAddress);
-                          userLong = await getLongitude(currentAddress);
-                        }
+                      if (deviceLocation){
+                        currentAddress = await getAddress(userLat, userLong);
+                      }else{
+                        userLat = await getLatitude(currentAddress);
+                        userLong = await getLongitude(currentAddress);
+                      }
 
-                        generateTriageResults();
-                        saveTriageResults();
-
-                        saveFellowResults(
-                            nameController.text.trim(),
-                            ageController.text.toString(),
-                            selectedSex,
-                          formController.text.trim(),
-                          selectedItems.toString(),
-                          triageResult,
-                          travelMode,
-                          bdayController.text.trim(),
-                          currentAddress,
-                          hospitalUserId,
-                          status,
-                          userLat.toString(),
-                        userLong.toString(),
-                        );
-
+                      generateTriageResults();
+                      saveTriageResults();
 
                     },
                     child: const Text('Submit',
@@ -791,6 +738,5 @@ class _TriageFormState extends State<TriageForm> {
     print(currentAddress);
     return currentAddress.toString();
   }
-
 
 }

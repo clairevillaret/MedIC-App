@@ -54,11 +54,11 @@ class _EmergencyResultState extends State<EmergencyResult> {
       'Sex': sex,
       'Main Concerns': mainConcern,
       'Symptoms': symptoms.toList(),
-      'Triage Result': triageCategory,
+      'triage_result': triageCategory,
       'Travel Mode': travelMode,
       'Age': age,
       'Address': address,
-      'Hospital User ID': hospital,
+      'hospital_user_id': hospital,
       'Status': status,
       'Location' : {
         'Latitude' : userLat.toString(),

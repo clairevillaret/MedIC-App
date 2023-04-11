@@ -1,15 +1,79 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/self_page.dart';
+import 'package:provider/provider.dart';
+
+import '../auto_get_hospital.dart';
+import '../display_selected_hospital.dart';
+import '../hospital_select.dart';
+import '../manual_get_hospital.dart';
+import '../saveTriageResults_class.dart';
 
 class NonUrgentResult extends StatefulWidget {
-  const NonUrgentResult({Key? key}) : super(key: key);
+  final bool deviceLocation;
+  const NonUrgentResult({Key? key, required this.deviceLocation}) : super(key: key);
 
   @override
   State<NonUrgentResult> createState() => _NonUrgentResultState();
 }
 
 class _NonUrgentResultState extends State<NonUrgentResult> {
+  final CollectionReference patients = FirebaseFirestore.instance.collection('hospitals_patients');
+
+  String userAddress = "";
+  String nearestHospital = "";
+  String userLat = "";
+  String userLong = "";
+  String userID = "";
+
+  Map<String, dynamic> hospitalMap = {};
+
+
+  createDocument(hospital) async {
+    String name = context.read<SaveTriageResults>().userName;
+    String birthday = context.read<SaveTriageResults>().userBirthday;
+    String age = context.read<SaveTriageResults>().userAge;
+    String sex = context.read<SaveTriageResults>().userSex;
+    String address = context.read<SaveTriageResults>().userAddress;
+    String mainConcern = context.read<SaveTriageResults>().mainConcern;
+    List symptoms = context.read<SaveTriageResults>().symptoms;
+    String triageCategory = context.read<SaveTriageResults>().triageCategory;
+    String travelMode = context.read<SaveTriageResults>().travelMode;
+    String status = context.read<SaveTriageResults>().status;
+    String userLat = context.read<SaveTriageResults>().userLatitude;
+    String userLong = context.read<SaveTriageResults>().userLongitude;
+
+    await patients.add({
+      'Name:': name,
+      'Birthday': birthday,
+      'Sex': sex,
+      'Main Concerns': mainConcern,
+      'Symptoms': symptoms.toList(),
+      'triage_result': triageCategory,
+      'Travel Mode': travelMode,
+      'Age': age,
+      'Address': address,
+      'hospital_user_id': hospital,
+      'Status': status,
+      'Location' : {
+        'Latitude' : userLat.toString(),
+        'Longitude': userLong.toString(),
+      }
+    }).then((value) {
+      //Provider.of<SaveTriageResults>(context, listen: false).saveUserId(value.id);
+      userID = value.id;
+      print(userID);
+    });
+    return userID;
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -112,9 +176,67 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
                       borderRadius: BorderRadius.circular(20.0),
                       side: const BorderSide(color: Color(0xFFba181b)),
                     ),
+                    onPressed: () async {
+
+                      if (widget.deviceLocation == true){
+                        userLat = context.read<SaveTriageResults>().userLatitude;
+                        userLong = context.read<SaveTriageResults>().userLongitude;
+                        hospitalMap = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
+                        print("hospital list: $hospitalMap");
+
+                        var nearest = hospitalMap.values.cast<num>().reduce(min);
+                        hospitalMap.forEach((key, value) {
+                          if (value == nearest) {
+                            nearestHospital = key;
+                          }
+                        });
+                        print(nearestHospital);
+
+                        userID = await createDocument(nearestHospital);
+
+                        if (!mounted) return;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+
+                      }else{
+                        userAddress = context.read<SaveTriageResults>().userAddress;
+                        hospitalMap = await ManualGetHospital(userAddress).main();
+                        print("hospital list: $hospitalMap");
+
+                        var nearest = hospitalMap.values.cast<num>().reduce(min);
+                        hospitalMap.forEach((key, value) {
+                          if (value == nearest) {
+                            nearestHospital = key;
+                          }
+                        });
+                        print(nearestHospital);
+
+                        userID = await createDocument(nearestHospital);
+
+                        if (!mounted) return;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+                      }
+
+                    },
+                    child: const Text('SELECT NEAREST HOSPITAL',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  RawMaterialButton(
+                    fillColor: const Color(0xFFba181b),
+                    elevation: 0.0,
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      side: const BorderSide(color: Color(0xFFba181b)),
+                    ),
                     onPressed: (){
                       //if (_formKey.currentState!.validate()){
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => const EmergencyCase()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSelect()));
                       //}
                     },
                     child: const Text('SELECT HOSPITAL',

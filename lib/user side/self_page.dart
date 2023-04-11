@@ -89,10 +89,10 @@ class _SelfAutofillState extends State<SelfAutofill>{
     } else if (countEmergency == 0 && countPriority > 0){
       if (!mounted) return;
       triageResult = "Priority Case";
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const PriorityResult()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityResult(deviceLocation: deviceLocation)));
     } else {
       triageResult = "Non-urgent Case";
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const NonUrgentResult()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => NonUrgentResult(deviceLocation: deviceLocation)));
     }
   }
 
@@ -109,41 +109,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
     Provider.of<SaveTriageResults>(context, listen: false).saveStatus(status);
     Provider.of<SaveTriageResults>(context, listen: false).saveUserLatitude(userLat.toString());
     Provider.of<SaveTriageResults>(context, listen: false).saveUserLongitude(userLong.toString());
-
-  }
-
-  Future<void> saveUserResults(
-      String sex,
-      String mainConcerns,
-      String symptoms,
-      String result,
-      String travel,
-      String age,
-      String address,
-      String hospitalId,
-      String hospitalStatus,
-      String latitude,
-      String longitude,
-      ) async {
-    FirebaseFirestore.instance.collection('hospitals_patients').add({
-      'Name:': userName,
-      'Birthday': userBirthday,
-      'Sex': sex,
-      'Main Concerns': mainConcerns,
-      'Symptoms': toListSymptoms(),
-      'Triage Result': triageResult,
-      'Travel Mode': travelMode,
-      'Age': age,
-      'Address': currentAddress,
-      'Hospital User ID': hospitalId,
-      'Status': hospitalStatus,
-      'Location' : {
-        'Latitude' : userLat.toString(),
-        'Longitude': userLong.toString(),
-      }
-    }).then((value) {
-      Provider.of<SaveTriageResults>(context, listen: false).saveUserId(value.id);
-    });
 
   }
 
@@ -756,21 +721,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
 
                       generateTriageResults();
                       saveTriageResults();
-
-                      // saveUserResults(
-                      //     selectedSex,
-                      //     formController.text.trim(),
-                      //     selectedItems.toString(),
-                      //   triageResult,
-                      //   travelMode,
-                      //     ageController.text.trim(),
-                      //     currentAddress,
-                      //     hospitalUserId,
-                      //     status,
-                      //     userLat.toString(),
-                      //   userLong.toString(),
-                      // );
-
 
                     },
                     child: const Text('Submit',
