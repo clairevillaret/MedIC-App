@@ -23,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage>{
     return Scaffold(
           appBar: AppBar(
             backgroundColor: const Color(0xFFba181b),
-            title: const Text("MedIC",
+            title: const Text("Settings",
               style: TextStyle(
                 fontSize: 20.0,
                 letterSpacing: 2.0,

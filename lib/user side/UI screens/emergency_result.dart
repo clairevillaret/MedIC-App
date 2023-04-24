@@ -138,7 +138,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       fontSize: 25.0,
                     ),
                   ),
-                  const SizedBox(height: 70.0,),
+                  const SizedBox(height: 60.0,),
                   const Text("EMERGENCY CASE",
                     style: TextStyle(
                         color: Color(0xFFba181b),
@@ -153,7 +153,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 30.0,),
+                  const SizedBox(height: 25.0,),
                   const Divider(
                     color: Colors.black12,
                     thickness: 2.0,
@@ -165,66 +165,88 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 50.0,),
-                  //Text(widget.userId),
+                  const SizedBox(height: 45.0,),
                   RawMaterialButton(
-                    fillColor: const Color(0xFFba181b),
-                    elevation: 0.0,
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      side: const BorderSide(color: Color(0xFFba181b)),
-                    ),
-                    onPressed: () async {
-
-                      if (widget.deviceLocation == true){
-                        userLat = context.read<SaveTriageResults>().userLatitude;
-                        userLong = context.read<SaveTriageResults>().userLongitude;
-                        hospitalMap = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
-                        print("hospital list: $hospitalMap");
-
-                        var nearest = hospitalMap.values.cast<num>().reduce(min);
-                        hospitalMap.forEach((key, value) {
-                          if (value == nearest) {
-                            nearestHospital = key;
-                          }
-                        });
-                        print(nearestHospital);
-
-                        userID = await createDocument(nearestHospital);
-
-                        if (!mounted) return;
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
-
-                      }else{
-                        userAddress = context.read<SaveTriageResults>().userAddress;
-                        hospitalMap = await ManualGetHospital(userAddress).main();
-                        print("hospital list: $hospitalMap");
-
-                        var nearest = hospitalMap.values.cast<num>().reduce(min);
-                        hospitalMap.forEach((key, value) {
-                          if (value == nearest) {
-                            nearestHospital = key;
-                          }
-                        });
-                        print(nearestHospital);
-
-                        userID = await createDocument(nearestHospital);
-
-                        if (!mounted) return;
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
-                      }
-
-                    },
-                    child: const Text('SELECT NEAREST HOSPITAL',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.bold,
+                      fillColor: Colors.white,
+                      elevation: 0.0,
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        side: const BorderSide(color: Color(0xFFba181b), width: 1.5),
                       ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset('images/nearest.png',
+                          height: 60.0,
+                          width: 60.0,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text("NEAREST",
+                            style: TextStyle(
+                              color: Color(0xFFba181b),
+                              fontSize: 18.0,
+                              letterSpacing: 1.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            ),
+                            Text(" HOSPITAL",
+                              style: TextStyle(
+                                color: Color(0xFFba181b),
+                                fontSize: 18.0,
+                                letterSpacing: 1.5,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ],
                     ),
+                      onPressed: () async {
+                        if (widget.deviceLocation == true){
+                          userLat = context.read<SaveTriageResults>().userLatitude;
+                          userLong = context.read<SaveTriageResults>().userLongitude;
+                          hospitalMap = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
+                          print("hospital list: $hospitalMap");
+
+                          var nearest = hospitalMap.values.cast<num>().reduce(min);
+                          hospitalMap.forEach((key, value) {
+                            if (value == nearest) {
+                              nearestHospital = key;
+                            }
+                          });
+                          print(nearestHospital);
+
+                          userID = await createDocument(nearestHospital);
+
+                          if (!mounted) return;
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+
+                        }else{
+                          userAddress = context.read<SaveTriageResults>().userAddress;
+                          hospitalMap = await ManualGetHospital(userAddress).main();
+                          print("hospital list: $hospitalMap");
+
+                          var nearest = hospitalMap.values.cast<num>().reduce(min);
+                          hospitalMap.forEach((key, value) {
+                            if (value == nearest) {
+                              nearestHospital = key;
+                            }
+                          });
+                          print(nearestHospital);
+
+                          userID = await createDocument(nearestHospital);
+
+                          if (!mounted) return;
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+                        }
+                      }
                   ),
+                  const SizedBox(height: 10.0,),
                   RawMaterialButton(
                     fillColor: const Color(0xFFba181b),
                     elevation: 0.0,
@@ -247,6 +269,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 10.0,),
                   RawMaterialButton(
                     constraints: const BoxConstraints(),
                     onPressed: (){
@@ -255,7 +278,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     child: const Text('CANCEL',
                       style: TextStyle(
                         color: Color(0xFFba181b),
-                        fontSize: 18.0,
+                        fontSize: 15.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

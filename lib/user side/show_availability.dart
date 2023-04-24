@@ -68,46 +68,46 @@ class ShowAvailability extends StatelessWidget {
                         //     ],
                         //   ),
                         // ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Text('Emergency Room: ',style: TextStyle(fontSize: 16.0),),
+                              Text(
+                                documentSnapshot['use_services']["Emergency Room"]["availability"].toString(),
+                                style: const TextStyle(fontSize: 16.0),)
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Text('Private Room: ',style: TextStyle(fontSize: 16.0),),
+                              Text(
+                                documentSnapshot['use_services']["Private Room"]["availability"].toString(),
+                                style: const TextStyle(fontSize: 16.0),)
+                            ],
+                          ),
+                        ),
                         // Expanded(
                         //   child: Row(
                         //     children: [
-                        //       const Text('Emergency Rooms: ',style: TextStyle(fontSize: 16.0),),
+                        //       const Text('Operating Room: ',style: TextStyle(fontSize: 16.0),),
                         //       Text(
-                        //         documentSnapshot['Services']["Emergency Room"].toString(),
+                        //         documentSnapshot['use_services']["Operating Room"]["availability"].toString(),
                         //         style: const TextStyle(fontSize: 16.0),)
                         //     ],
                         //   ),
                         // ),
-                        // Expanded(
-                        //   child: Row(
-                        //     children: [
-                        //       const Text('Private rooms: ',style: TextStyle(fontSize: 16.0),),
-                        //       Text(
-                        //         documentSnapshot['Services']["Private Rooms"].toString(),
-                        //         style: const TextStyle(fontSize: 16.0),)
-                        //     ],
-                        //   ),
-                        // ),
-                        // Expanded(
-                        //   child: Row(
-                        //     children: [
-                        //       const Text('Ward1: ',style: TextStyle(fontSize: 16.0),),
-                        //       Text(
-                        //         documentSnapshot['Services']["Ward1"].toString(),
-                        //         style: const TextStyle(fontSize: 16.0),)
-                        //     ],
-                        //   ),
-                        // ),
-                        // Expanded(
-                        //   child: Row(
-                        //     children: [
-                        //       const Text('Ward2: ',style: TextStyle(fontSize: 16.0),),
-                        //       Text(
-                        //         documentSnapshot['Services']["Ward2"].toString(),
-                        //         style: const TextStyle(fontSize: 16.0),)
-                        //     ],
-                        //   ),
-                        // ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Text('General Ward: ',style: TextStyle(fontSize: 16.0),),
+                              Text(
+                                documentSnapshot['use_services']["General Ward"]["availability"].toString(),
+                                style: const TextStyle(fontSize: 16.0),)
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),

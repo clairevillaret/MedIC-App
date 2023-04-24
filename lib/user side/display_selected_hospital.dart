@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:medic/user%20side/UI%20screens/emergency_result.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +24,9 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
   final CollectionReference patients = FirebaseFirestore.instance.collection('hospitals_patients');
   String hospital = "";
   String userId = "";
+  late Timer timer;
+  int time = 0;
+  bool timeRunning = false;
 
   @override
   void initState() {
@@ -29,7 +34,20 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     print("init state $userId");
     hospital = widget.currentHospital;
     print("init state $hospital");
+    //startTimer();
     super.initState();
+  }
+
+  void startTimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) { });
+    //timer = Timer(const Duration(minutes: 6), () {});
+    timer.cancel();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   generatingForHospital(currentHospital, currentUid){
@@ -81,7 +99,6 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
           setState(() {
             userId = value.id;
           });
-
           deletePreviousRecord(currentUid);
         });
       }
@@ -101,6 +118,13 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
             stream: patients.doc(userId).snapshots(),
             builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               var data = snapshot.data;
+              if (snapshot.data != null) {
+                if (!snapshot.data!.exists){
+                  return Container(
+                    color: Colors.white,
+                  );
+                }
+              }
               if (snapshot.hasError) {
                 return const Center(child: Text('Something went wrong, sorry.'));
               }
@@ -110,11 +134,19 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
               if (!snapshot.hasData) {
                 return const CircularProgressIndicator();
               }
-              if(widget.hospitalList.length > 1){
+              if(widget.hospitalList.length > 1) {
                 if (data!['Status'] == "pending"){
-                  return const Center(child: Text("We are currently contacting the nearest hospital that can accommodate you..."));
+                  startTimer();
+                  while(timer.tick < 360){
+                    print(timer.tick);
+                    return pendingWidget();
+                  }
+                  generatingForHospital(hospital, userId);
                 }
+
                 if (data['Status'] == "accepted"){
+                  timer.cancel();
+
                   var currentHospital = data['hospital_user_id'];
                   if (data['Travel Mode'] == "AMBULANCE"){
                     return ambulanceWidget(data: currentHospital);
@@ -122,6 +154,8 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                   return privateWidget(data: currentHospital);
                 }
                 if (data['Status'] == "rejected"){
+                  timer.cancel();
+
                   generatingForHospital(hospital, userId);
                 }
               }
@@ -138,6 +172,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
 
                 }
                 if (data['Status'] == "rejected"){
+                  deletePreviousRecord(userId);
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -159,10 +194,52 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     );
   }
 
+  Widget pendingWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("We are currently contacting the nearest hospital that can accommodate you..."),
+        TextButton(
+          onPressed: () {
+            showDialog(context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Are you sure you want to cancel the request?",
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                    ),),
+                  actions: [
+                    TextButton(onPressed: () {
+                      timer.cancel();
+                      print("timer canceled");
+                      if (!mounted) return;
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      deletePreviousRecord(userId);
+
+                    },
+                        child: const Text("Yes")
+                    ),
+                    TextButton(onPressed: () {
+                      if (!mounted) return;
+                      Navigator.of(context).pop();
+                    },
+                        child: const Text("No")
+                    ),
+                  ],
+                )
+            );
+          },
+          child: const Text("Cancel"),
+        ),
+
+      ],
+    );
+  }
+
   Widget ambulanceWidget({required data}){
     return Container(
       width: double.infinity,
-      //height: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.all(30),
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
@@ -222,7 +299,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
               side: const BorderSide(color: Colors.green, width: 2.0),
             ),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
             },
             child: const Text('CONFIRM ARRIVAL',
               style: TextStyle(
@@ -234,7 +311,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
             ),
           ),
           const SizedBox(height: 20.0,),
-          const Text("Please confirm if the ambulance has arrived. Confirming will exit you from the application.",
+          const Text("Please confirm if the ambulance has arrived. Confirming will return you to the homepage.",
             style: TextStyle(
                 color: Colors.black54,
                 fontSize: 16.0
@@ -310,7 +387,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
               side: const BorderSide(color: Colors.green, width: 2.0),
             ),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
             },
             child: const Text('CONFIRM ARRIVAL',
               style: TextStyle(
@@ -322,7 +399,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
             ),
           ),
           const SizedBox(height: 20.0,),
-          const Text("Please confirm if you have arrived. Confirming will exit you from the application.",
+          const Text("Please confirm if you have arrived. Confirming will return you to the homepage.",
             style: TextStyle(
                 color: Colors.black54,
                 fontSize: 16.0

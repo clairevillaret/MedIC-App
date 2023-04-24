@@ -33,7 +33,7 @@ class _SignupPageState extends State<SignupPage> {
   bool haveAgreed = false;
   bool isHiddenPassword = true;
 
-  List<String> roles = ['Regular User','Paramedic','Hospital Staff'];
+  List<String> roles = ['Regular User','Paramedic'];
   String selectedRole = 'Regular User';
 
   void _togglePassword() {
@@ -54,6 +54,7 @@ class _SignupPageState extends State<SignupPage> {
           emailController.text.trim(),
           numberController.text.trim(),
           addressController.text.trim(),
+        passwordController.text.trim(),
         selectedRole,
       );
     }
@@ -70,13 +71,14 @@ class _SignupPageState extends State<SignupPage> {
 
   }
 
-  Future addUserDetails(String fullName, String birthdate, String email, String contactNumber, String address, String role) async {
+  Future addUserDetails(String fullName, String birthdate, String email, String contactNumber, String address, String password, String role) async {
     await FirebaseFirestore.instance.collection('users').add({
       'Full Name': fullName,
       'Birthdate': birthdate,
       'Email': email,
       'Contact Number': contactNumber,
       'Address': address,
+      'Password' : password,
       'Role': selectedRole,
     });
   }

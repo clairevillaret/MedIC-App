@@ -2,11 +2,14 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:medic/user%20side/ambulance_request.dart';
 import 'package:medic/user%20side/fellowSelf_page.dart';
 import 'package:medic/user%20side/hospital_search.dart';
 import 'package:medic/user%20side/settings.dart';
+import 'package:medic/user%20side/timer.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -17,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>{
+  DateTime backPressedTime = DateTime.now();
   late StreamSubscription subscription;
   bool isDeviceConnected = false;
   bool isAlertSet = false;
@@ -47,86 +51,103 @@ class _HomeScreenState extends State<HomeScreen>{
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("images/grid_background.jpg",),
-                fit: BoxFit.cover)),
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: const Color(0xFFba181b),
-            title: const Text("MedIC",
-                style: TextStyle(
-                  fontSize: 20.0,
-                  letterSpacing: 2.0,
+    return WillPopScope(
+      onWillPop: () async {
+        final difference = DateTime.now().difference(backPressedTime);
+        backPressedTime = DateTime.now();
+
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const HomeScreen()),(route) => false);
+
+        if(difference >= const Duration(seconds: 2)){
+          Fluttertoast.showToast(msg: 'Click again to close the app');
+          return false;
+        }else{
+          Fluttertoast.cancel();
+          SystemNavigator.pop();
+          return true;
+        }
+      },
+      child: MaterialApp(
+        home: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("images/grid_background.jpg",),
+                  fit: BoxFit.cover)),
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color(0xFFba181b),
+              title: const Text("MedIC",
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    letterSpacing: 2.0,
+                  ),
                 ),
-              ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSearch()));
-                },
-                icon: const Icon(Icons.search,color: Colors.white,),
-              ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AmbulanceRequest()));
-                },
-                icon: const Icon(Icons.home,color: Colors.white,),
-              ),
-              IconButton(
+              actions: [
+                IconButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSearch()));
                   },
-                  icon: const Icon(Icons.settings,color: Colors.white,),
-              ),
-            ],
-            ),
-          backgroundColor: Colors.transparent,
-          body: SafeArea(child:
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      //margin: const EdgeInsets.fromLTRB(0.0, 90.0, 0.0, 50.0),
-                      height: 150,
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('images/lifeline.jpg',
-                            ),
-                            opacity: 0.4,
-                            fit: BoxFit.cover,)
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RawMaterialButton(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onPressed: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
-                          },
-                          child: Image.asset('images/emergency_button.png',
-                            height: 300.0,
-                            width: 300.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                  icon: const Icon(Icons.search,color: Colors.white,),
                 ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                  },
+                  icon: const Icon(Icons.home,color: Colors.white,),
+                ),
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                    },
+                    icon: const Icon(Icons.settings,color: Colors.white,),
+                ),
+              ],
               ),
-            ],
-          ),
-          ),
-      ),
+            backgroundColor: Colors.transparent,
+            body: SafeArea(child:
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        //margin: const EdgeInsets.fromLTRB(0.0, 90.0, 0.0, 50.0),
+                        height: 150,
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('images/lifeline.jpg',
+                              ),
+                              opacity: 0.4,
+                              fit: BoxFit.cover,)
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RawMaterialButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onPressed: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
+                            },
+                            child: Image.asset('images/emergency_button.png',
+                              height: 300.0,
+                              width: 300.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            ),
+        ),
+        ),
       ),
     );
 
@@ -153,5 +174,19 @@ class _HomeScreenState extends State<HomeScreen>{
       ],
     ),
   );
+
+  Future<bool> onButtonClicked(BuildContext context) async {
+    final difference = DateTime.now().difference(backPressedTime);
+    backPressedTime = DateTime.now();
+
+    if(difference >= const Duration(seconds: 2)){
+      Fluttertoast.showToast(msg: 'Click again to close the app');
+      return false;
+  }else{
+      //SystemNavigator.pop(animated: true);
+      Fluttertoast.cancel();
+      return true;
+    }
+  }
 }
 

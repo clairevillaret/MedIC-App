@@ -167,65 +167,88 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 50.0,),
+                  const SizedBox(height: 45.0,),
                   RawMaterialButton(
-                    fillColor: const Color(0xFFba181b),
-                    elevation: 0.0,
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      side: const BorderSide(color: Color(0xFFba181b)),
-                    ),
-                    onPressed: () async {
-
-                      if (widget.deviceLocation == true){
-                        userLat = context.read<SaveTriageResults>().userLatitude;
-                        userLong = context.read<SaveTriageResults>().userLongitude;
-                        hospitalMap = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
-                        print("hospital list: $hospitalMap");
-
-                        var nearest = hospitalMap.values.cast<num>().reduce(min);
-                        hospitalMap.forEach((key, value) {
-                          if (value == nearest) {
-                            nearestHospital = key;
-                          }
-                        });
-                        print(nearestHospital);
-
-                        userID = await createDocument(nearestHospital);
-
-                        if (!mounted) return;
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
-
-                      }else{
-                        userAddress = context.read<SaveTriageResults>().userAddress;
-                        hospitalMap = await ManualGetHospital(userAddress).main();
-                        print("hospital list: $hospitalMap");
-
-                        var nearest = hospitalMap.values.cast<num>().reduce(min);
-                        hospitalMap.forEach((key, value) {
-                          if (value == nearest) {
-                            nearestHospital = key;
-                          }
-                        });
-                        print(nearestHospital);
-
-                        userID = await createDocument(nearestHospital);
-
-                        if (!mounted) return;
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
-                      }
-
-                    },
-                    child: const Text('SELECT NEAREST HOSPITAL',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.bold,
+                      fillColor: Colors.white,
+                      elevation: 0.0,
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        side: const BorderSide(color: Color(0xFFba181b), width: 1.5),
                       ),
-                    ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset('images/nearest.png',
+                            height: 60.0,
+                            width: 60.0,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text("NEAREST",
+                                style: TextStyle(
+                                  color: Color(0xFFba181b),
+                                  fontSize: 18.0,
+                                  letterSpacing: 1.5,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(" HOSPITAL",
+                                style: TextStyle(
+                                  color: Color(0xFFba181b),
+                                  fontSize: 18.0,
+                                  letterSpacing: 1.5,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                            ],
+                          ),
+                        ],
+                      ),
+                      onPressed: () async {
+                        if (widget.deviceLocation == true){
+                          userLat = context.read<SaveTriageResults>().userLatitude;
+                          userLong = context.read<SaveTriageResults>().userLongitude;
+                          hospitalMap = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
+                          print("hospital list: $hospitalMap");
+
+                          var nearest = hospitalMap.values.cast<num>().reduce(min);
+                          hospitalMap.forEach((key, value) {
+                            if (value == nearest) {
+                              nearestHospital = key;
+                            }
+                          });
+                          print(nearestHospital);
+
+                          userID = await createDocument(nearestHospital);
+
+                          if (!mounted) return;
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+
+                        }else{
+                          userAddress = context.read<SaveTriageResults>().userAddress;
+                          hospitalMap = await ManualGetHospital(userAddress).main();
+                          print("hospital list: $hospitalMap");
+
+                          var nearest = hospitalMap.values.cast<num>().reduce(min);
+                          hospitalMap.forEach((key, value) {
+                            if (value == nearest) {
+                              nearestHospital = key;
+                            }
+                          });
+                          print(nearestHospital);
+
+                          userID = await createDocument(nearestHospital);
+
+                          if (!mounted) return;
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+                        }
+                      }
                   ),
+                  const SizedBox(height: 10.0,),
                   RawMaterialButton(
                     fillColor: const Color(0xFFba181b),
                     elevation: 0.0,
