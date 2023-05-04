@@ -57,6 +57,19 @@ class _HospitalSelectState extends State<HospitalSelect> {
     return userID;
   }
 
+  sortHospitals() {
+    String triageCategory = context.read<SaveTriageResults>().triageCategory;
+    if (triageCategory == "Emergency Case"){
+      return hospitals.orderBy("use_services.Emergency Room.availability", descending: true).snapshots();
+    }
+    else if (triageCategory == "Priority Case"){
+      return hospitals.orderBy("use_services.Emergency Room.availability", descending: true).snapshots();
+    }else{
+      return hospitals.orderBy("use_services.General Ward.availability", descending: true).snapshots();
+    }
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -101,33 +114,36 @@ class _HospitalSelectState extends State<HospitalSelect> {
           ),
         ),
       ),
-      body: StreamBuilder(
-          stream: hospitals.snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: sortHospitals(),
+          builder: (BuildContext context, snapshot) {
             if (snapshot.hasError) {
               return const Center(child: Text('Something went wrong'));
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: Text("Loading"));
+            }else{
+              final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.data!.docs;
+
+              return ListView.builder(
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final DocumentSnapshot documentSnapshot = docs[index];
+                    final name = documentSnapshot['Name'];
+                    //print(name);
+                    if (searchController.text.isEmpty){
+                      return customWidget(documentSnapshot: documentSnapshot);
+                    }
+                    else if(name.toLowerCase().contains(searchController.text.toLowerCase())){
+                      return customWidget(documentSnapshot: documentSnapshot);
+                    }else{
+                      return Container(
+                        color: Colors.white,
+                      );
+                    }
+                  }
+              );
             }
-            return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  final DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
-                  final name = documentSnapshot['Name'];
-                  //print(name);
-                  if (searchController.text.isEmpty){
-                    return customWidget(documentSnapshot: documentSnapshot);
-                  }
-                  else if(name.toLowerCase().contains(searchController.text.toLowerCase())){
-                    return customWidget(documentSnapshot: documentSnapshot);
-                  }else{
-                    return Container(
-                      color: Colors.white,
-                    );
-                  }
-                }
-            );
 
           }
       ),

@@ -1,8 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
-import 'package:medic/user%20side/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:medic/user%20side/login_page.dart';
 import 'package:medic/user%20side/main_page.dart';
 import 'package:provider/provider.dart';
 

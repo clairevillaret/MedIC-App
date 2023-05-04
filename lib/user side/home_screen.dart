@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:medic/user%20side/ambulance_request.dart';
 import 'package:medic/user%20side/fellowSelf_page.dart';
 import 'package:medic/user%20side/hospital_search.dart';
 import 'package:medic/user%20side/settings.dart';
-import 'package:medic/user%20side/timer.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -88,12 +86,6 @@ class _HomeScreenState extends State<HomeScreen>{
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSearch()));
                   },
                   icon: const Icon(Icons.search,color: Colors.white,),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-                  },
-                  icon: const Icon(Icons.home,color: Colors.white,),
                 ),
                 IconButton(
                     onPressed: () {

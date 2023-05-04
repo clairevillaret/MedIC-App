@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -159,7 +160,20 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Birthdate',
+                        suffixIcon: const Icon(Icons.calendar_month_outlined),
                       ),
+                      onTap: () async {
+                        DateTime? chosenDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1897),
+                            lastDate: DateTime(2024));
+                        if (chosenDate != null){
+                          setState(() {
+                            birthdateController.text = DateFormat.yMMMMd().format(chosenDate);
+                          });
+                        }
+                      },
                       validator: (value){
                         if(value == null || value.isEmpty){
                           return "* Required";

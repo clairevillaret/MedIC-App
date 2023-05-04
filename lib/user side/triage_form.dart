@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:medic/user%20side/getLocation_class.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:medic/user%20side/checkbox_class.dart';
@@ -223,7 +225,20 @@ class _TriageFormState extends State<TriageForm> {
                     controller: bdayController,
                     decoration: const InputDecoration(
                       labelText: 'Birthdate',
+                      suffixIcon: Icon(Icons.calendar_month_outlined),
                     ),
+                    onTap: () async {
+                      DateTime? chosenDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1897),
+                          lastDate: DateTime(2024));
+                      if (chosenDate != null){
+                        setState(() {
+                          bdayController.text = DateFormat.yMMMMd().format(chosenDate);
+                        });
+                      }
+                    },
                     validator: (value){
                       if(value == null || value.isEmpty){
                         return "* Required";
@@ -280,12 +295,12 @@ class _TriageFormState extends State<TriageForm> {
                     decoration: const InputDecoration(
                       labelText: 'Address',
                     ),
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return "* Required";
-                      }
-                      return null;
-                    },
+                    // validator: (value){
+                    //   if(value == null || value.isEmpty){
+                    //     return "* Required";
+                    //   }
+                    //   return null;
+                    // },
                   ),
                 ),
                 CheckboxListTile(
@@ -318,6 +333,12 @@ class _TriageFormState extends State<TriageForm> {
                         // border: OutlineInputBorder(
                         //     borderRadius: BorderRadius.circular(10.0)),
                     ),
+                    validator: (value){
+                      if(value == null || value.isEmpty){
+                        return "* Required";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 15.0,),
@@ -674,23 +695,29 @@ class _TriageFormState extends State<TriageForm> {
                       side: const BorderSide(color: Color(0xFFba181b)),
                     ),
                     onPressed: () async {
-                      //if (_formKey.currentState!.validate()){
-                      setState(() {
-                        currentAddress = addressController.text;
-                        userLat =  userLocation?.latitude;
-                        userLong = userLocation?.longitude;
-                      });
+                      if (_formKey.currentState!.validate()) {
+                        if (addressController.text.isNotEmpty || deviceLocation) {
+                          setState(() {
+                            currentAddress = addressController.text;
+                            userLat = userLocation?.latitude;
+                            userLong = userLocation?.longitude;
+                          });
 
-                      if (deviceLocation){
-                        currentAddress = await getAddress(userLat, userLong);
-                      }else{
-                        userLat = await getLatitude(currentAddress);
-                        userLong = await getLongitude(currentAddress);
+                          if (deviceLocation) {
+                            currentAddress = await getAddress(userLat, userLong);
+                          } else {
+                            userLat = await getLatitude(currentAddress);
+                            userLong = await getLongitude(currentAddress);
+                          }
+
+                          generateTriageResults();
+                          saveTriageResults();
+
+                        }else{
+                          Fluttertoast.showToast(msg: 'Please provide your address');
+                        }
+
                       }
-
-                      generateTriageResults();
-                      saveTriageResults();
-
                     },
                     child: const Text('Submit',
                       style: TextStyle(

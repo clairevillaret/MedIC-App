@@ -67,7 +67,7 @@ class _HospitalSearchState extends State<HospitalSearch> {
         ),
       ),
       body: StreamBuilder(
-        stream: hospitals.snapshots(),
+        stream: hospitals.orderBy("Name").snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
               return const Center(child: Text('Something went wrong'));

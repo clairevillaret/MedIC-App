@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:medic/user%20side/auto_get_hospital.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/hospital_select.dart';

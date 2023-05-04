@@ -99,7 +99,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
           setState(() {
             userId = value.id;
           });
-          deletePreviousRecord(currentUid);
+          //deletePreviousRecord(currentUid);
         });
       }
     });
@@ -161,9 +161,16 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
               }
               else if (widget.hospitalList.length == 1){
                 if (data!['Status'] == "pending"){
-                  return const Center(child: Text("We are currently contacting the nearest hospital that can accommodate you..."));
+                  startTimer();
+                  while(timer.tick < 360){
+                    print(timer.tick);
+                    return pendingWidget();
+                  }
+                  generatingForHospital(hospital, userId);
                 }
                 if (data['Status'] == "accepted"){
+                  timer.cancel();
+
                   var currentHospital = data['hospital_user_id'];
                   if (data['Travel Mode'] == "AMBULANCE"){
                     return ambulanceWidget(data: currentHospital);
@@ -172,16 +179,25 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
 
                 }
                 if (data['Status'] == "rejected"){
-                  deletePreviousRecord(userId);
+                  timer.cancel();
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text("Sorry, we didn't find any hospital that can accommodate you as of the moment."),
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
+                        child: Text("Sorry, we didn't find any hospital that can accommodate you as of the moment."),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                        child: Text("Please wait for a few more minutes and try selecting a hospital again."),
+                      ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                          Navigator.pop(context);
+                          //deletePreviousRecord(userId);
                         },
-                        child: const Text("Go to Homepage"),
+                        child: const Text("Go back"),
                       )
 
                     ],
@@ -198,7 +214,10 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("We are currently contacting the nearest hospital that can accommodate you..."),
+        const Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text("We are currently contacting the nearest hospital that can accommodate you..."),
+        ),
         TextButton(
           onPressed: () {
             showDialog(context: context,
@@ -300,6 +319,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
             ),
             onPressed: (){
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+              deletePreviousRecord(userId);
             },
             child: const Text('CONFIRM ARRIVAL',
               style: TextStyle(

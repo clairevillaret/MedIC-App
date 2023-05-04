@@ -87,7 +87,10 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Center(child: Text("$selectedHospital cannot accommodate you as of the moment. Please select a new hospital.")),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text("$selectedHospital cannot accommodate you as of the moment. Please select a new hospital."),
+                      ),
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -114,11 +117,14 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Center(child: Text("$currentHospital cannot accommodate you as of the moment. Please select a new hospital.")),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text("$currentHospital cannot accommodate you as of the moment. Please select a new hospital."),
+                      ),
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            deletePreviousRecord(userId);
+                            //deletePreviousRecord(userId);
                           },
                           child: const Text("Go back")
                       )
@@ -136,8 +142,12 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
   Widget pendingWidget({required data}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text("We are currently contacting $data, please wait for a moment..."),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text("We are currently contacting $data, please wait for a moment..."),
+        ),
         TextButton(
           onPressed: () {
             showDialog(context: context,
@@ -240,6 +250,8 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
             ),
             onPressed: (){
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+              deletePreviousRecord(userId);
+
             },
             child: const Text('CONFIRM ARRIVAL',
               style: TextStyle(

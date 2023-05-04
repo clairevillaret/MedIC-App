@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/home_screen.dart';
-import 'package:medic/user%20side/recieveData_page.dart';
 import 'package:medic/user%20side/self_page.dart';
 import 'package:medic/user%20side/triage_form.dart';
 
