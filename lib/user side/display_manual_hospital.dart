@@ -100,6 +100,7 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
                     ],
                   );
                 }
+
                 if (data['Status'] == "accepted"){
                   timer.cancel();
                   var currentHospital = data['hospital_user_id'];

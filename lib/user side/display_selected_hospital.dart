@@ -90,7 +90,8 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
           'Location' : {
             'Latitude' : userLat.toString(),
             'Longitude': userLong.toString(),
-          }
+          },
+          'requested_time': Timestamp.now(),
         }).then((value) {
           userId = value.id;
           patients.doc(userId).update({"Status": "pending"});

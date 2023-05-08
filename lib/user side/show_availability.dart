@@ -56,18 +56,6 @@ class ShowAvailability extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Expanded(
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.start,
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       const Text('Ambulance: ',style: TextStyle(fontSize: 16.0),),
-                        //       Text(
-                        //         documentSnapshot['Services']['Ambulance'].toString(),
-                        //         style: const TextStyle(fontSize: 16.0),)
-                        //     ],
-                        //   ),
-                        // ),
                         Expanded(
                           child: Row(
                             children: [
@@ -88,16 +76,16 @@ class ShowAvailability extends StatelessWidget {
                             ],
                           ),
                         ),
-                        // Expanded(
-                        //   child: Row(
-                        //     children: [
-                        //       const Text('Operating Room: ',style: TextStyle(fontSize: 16.0),),
-                        //       Text(
-                        //         documentSnapshot['use_services']["Operating Room"]["availability"].toString(),
-                        //         style: const TextStyle(fontSize: 16.0),)
-                        //     ],
-                        //   ),
-                        // ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Text('Labor Room: ',style: TextStyle(fontSize: 16.0),),
+                              Text(
+                                documentSnapshot['use_services']["Labor Room"]["availability"].toString(),
+                                style: const TextStyle(fontSize: 16.0),)
+                            ],
+                          ),
+                        ),
                         Expanded(
                           child: Row(
                             children: [

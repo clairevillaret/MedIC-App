@@ -61,7 +61,8 @@ class _PriorityResultState extends State<PriorityResult> {
       'Location' : {
         'Latitude' : userLat.toString(),
         'Longitude': userLong.toString(),
-      }
+      },
+      'requested_time': Timestamp.now(),
     }).then((value) {
       //Provider.of<SaveTriageResults>(context, listen: false).saveUserId(value.id);
       userID = value.id;
