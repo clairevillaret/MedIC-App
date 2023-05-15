@@ -32,10 +32,10 @@ class _EmergencyResultState extends State<EmergencyResult> {
 
   Map<String, dynamic> hospitalMap = {};
 
-
   createDocument(hospital) async {
     String name = context.read<SaveTriageResults>().userName;
     String birthday = context.read<SaveTriageResults>().userBirthday;
+    String number = context.read<SaveTriageResults>().userNumber;
     String age = context.read<SaveTriageResults>().userAge;
     String sex = context.read<SaveTriageResults>().userSex;
     String address = context.read<SaveTriageResults>().userAddress;
@@ -48,8 +48,9 @@ class _EmergencyResultState extends State<EmergencyResult> {
     String userLong = context.read<SaveTriageResults>().userLongitude;
 
     await patients.add({
-      'Name:': name,
+      'Name': name,
       'Birthday': birthday,
+      'Contact Number': number,
       'Sex': sex,
       'Main Concerns': mainConcern,
       'Symptoms': symptoms.toList(),
@@ -273,7 +274,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                   RawMaterialButton(
                     constraints: const BoxConstraints(),
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const HomeScreen()),(route) => false);
                     },
                     child: const Text('CANCEL',
                       style: TextStyle(

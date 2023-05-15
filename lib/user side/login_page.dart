@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medic/user%20side/home_screen.dart';
@@ -124,17 +123,17 @@ class _LoginPageState extends State<LoginPage> {
                             onTap: () {
                               _togglePassword();
                             },
-                              //isHiddenPassword = !isHiddenPassword;
+                            //isHiddenPassword = !isHiddenPassword;
                             child: Icon(
-                              isHiddenPassword? Icons.visibility
-                              : Icons.visibility_off)),
+                                isHiddenPassword? Icons.visibility
+                                    : Icons.visibility_off)),
                       ),
                       validator: (value){
-                      if(value == null || value.isEmpty){
-                        return "* Required";
-                      }
-                      return null;
-                    },
+                        if(value == null || value.isEmpty){
+                          return "* Required";
+                        }
+                        return null;
+                      },
                     ),
                     Row(
                       children: const <Widget>[

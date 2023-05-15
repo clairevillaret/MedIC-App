@@ -35,6 +35,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
   createDocument(hospital) async {
     String name = context.read<SaveTriageResults>().userName;
     String birthday = context.read<SaveTriageResults>().userBirthday;
+    String number = context.read<SaveTriageResults>().userNumber;
     String age = context.read<SaveTriageResults>().userAge;
     String sex = context.read<SaveTriageResults>().userSex;
     String address = context.read<SaveTriageResults>().userAddress;
@@ -47,8 +48,9 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
     String userLong = context.read<SaveTriageResults>().userLongitude;
 
     await patients.add({
-      'Name:': name,
+      'Name': name,
       'Birthday': birthday,
+      'Contact Number': number,
       'Sex': sex,
       'Main Concerns': mainConcern,
       'Symptoms': symptoms.toList(),
@@ -275,7 +277,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
                   RawMaterialButton(
                     constraints: const BoxConstraints(),
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const HomeScreen()),(route) => false);
                     },
                     child: const Text('CANCEL',
                       style: TextStyle(

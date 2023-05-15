@@ -22,6 +22,7 @@ class _HospitalSelectState extends State<HospitalSelect> {
   createDocument(hospital) async {
     String name = context.read<SaveTriageResults>().userName;
     String birthday = context.read<SaveTriageResults>().userBirthday;
+    String number = context.read<SaveTriageResults>().userNumber;
     String age = context.read<SaveTriageResults>().userAge;
     String sex = context.read<SaveTriageResults>().userSex;
     String address = context.read<SaveTriageResults>().userAddress;
@@ -34,8 +35,9 @@ class _HospitalSelectState extends State<HospitalSelect> {
     String userLong = context.read<SaveTriageResults>().userLongitude;
 
     await FirebaseFirestore.instance.collection('hospitals_patients').add({
-      'Name:': name,
+      'Name': name,
       'Birthday': birthday,
+      'Contact Number': number,
       'Sex': sex,
       'Main Concerns': mainConcern,
       'Symptoms': symptoms.toList(),
@@ -166,8 +168,10 @@ class _HospitalSelectState extends State<HospitalSelect> {
                   children: [
                     CircleAvatar(
                       radius: 50.0,
-                      backgroundImage: NetworkImage(documentSnapshot['Pic_url']),
                       backgroundColor: Colors.transparent,
+                      backgroundImage: const AssetImage('images/placeholder.png'),
+                      foregroundImage: NetworkImage(documentSnapshot['Pic_url']),
+
                     ),
                     const SizedBox(width: 8.0),
                     Expanded(

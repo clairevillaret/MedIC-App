@@ -29,16 +29,21 @@ class _HomeScreenState extends State<HomeScreen>{
     super.initState();
   }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-            (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && isAlertSet == false) {
-            showDialogBox();
-            setState(() => isAlertSet = true);
-          }
-        },
-      );
+
+  getConnectivity() {
+    subscription = Connectivity().onConnectivityChanged.listen(
+          (ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!isDeviceConnected && isAlertSet == false) {
+          showDialogBox();
+          setState(() => isAlertSet = true);
+        }
+      },
+    );
+
+  }
+
+
 
   @override
   void dispose() {
@@ -75,11 +80,11 @@ class _HomeScreenState extends State<HomeScreen>{
             appBar: AppBar(
               backgroundColor: const Color(0xFFba181b),
               title: const Text("MedIC",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    letterSpacing: 2.0,
-                  ),
+                style: TextStyle(
+                  fontSize: 20.0,
+                  letterSpacing: 2.0,
                 ),
+              ),
               actions: [
                 IconButton(
                   onPressed: () {
@@ -88,13 +93,13 @@ class _HomeScreenState extends State<HomeScreen>{
                   icon: const Icon(Icons.search,color: Colors.white,),
                 ),
                 IconButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
-                    },
-                    icon: const Icon(Icons.settings,color: Colors.white,),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                  },
+                  icon: const Icon(Icons.settings,color: Colors.white,),
                 ),
               ],
-              ),
+            ),
             backgroundColor: Colors.transparent,
             body: SafeArea(child:
             Column(
@@ -122,8 +127,13 @@ class _HomeScreenState extends State<HomeScreen>{
                           RawMaterialButton(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
-                            onPressed: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
+                            onPressed: () async {
+                              isDeviceConnected =
+                              await InternetConnectionChecker().hasConnection;
+                              !isDeviceConnected
+                                  ? () {Fluttertoast.showToast(msg: 'Internet Connection is required to proceed.'); null;}()
+                                  : () {Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));}();
+
                             },
                             child: Image.asset('images/emergency_button.png',
                               height: 300.0,
@@ -138,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen>{
               ],
             ),
             ),
-        ),
+          ),
         ),
       ),
     );
@@ -161,7 +171,14 @@ class _HomeScreenState extends State<HomeScreen>{
               setState(() => isAlertSet = true);
             }
           },
-          child: const Text('OK'),
+          child: const Text('Try again'),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const HomeScreen()),(route) => false);
+          },
+          child: const Text('Go to Homepage'),
+
         ),
       ],
     ),
@@ -174,11 +191,10 @@ class _HomeScreenState extends State<HomeScreen>{
     if(difference >= const Duration(seconds: 2)){
       Fluttertoast.showToast(msg: 'Click again to close the app');
       return false;
-  }else{
+    }else{
       //SystemNavigator.pop(animated: true);
       Fluttertoast.cancel();
       return true;
     }
   }
 }
-

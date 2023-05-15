@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
@@ -29,6 +30,7 @@ class _TriageFormState extends State<TriageForm> {
   final formController = TextEditingController();
   final bdayController = TextEditingController();
   final addressController = TextEditingController();
+  final numberController = TextEditingController();
 
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -95,6 +97,7 @@ class _TriageFormState extends State<TriageForm> {
     Provider.of<SaveTriageResults>(context, listen: false).saveName(nameController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveAge(ageController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveSex(selectedSex);
+    Provider.of<SaveTriageResults>(context, listen: false).saveNumber(numberController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveConcerns(formController.text);
     Provider.of<SaveTriageResults>(context, listen: false).saveTriageCategory(triageResult);
     Provider.of<SaveTriageResults>(context, listen: false).saveTravelMode(travelMode);
@@ -174,7 +177,7 @@ class _TriageFormState extends State<TriageForm> {
             iconSize: 25.0,
             onPressed: () {
               context.read<SaveTriageResults>().clearList();
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const FellowSelf()),  (Route<dynamic> route) => false,);
             },
           ),
           title: const Text("Triage Form",
@@ -247,6 +250,21 @@ class _TriageFormState extends State<TriageForm> {
                     },
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
+                  child: TextFormField(
+                    controller: numberController,
+                    decoration: const InputDecoration(
+                      labelText: 'Contact Number',
+                    ),
+                    validator: (value){
+                      if(value == null || value.isEmpty){
+                        return "* Required";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -295,12 +313,6 @@ class _TriageFormState extends State<TriageForm> {
                     decoration: const InputDecoration(
                       labelText: 'Address',
                     ),
-                    // validator: (value){
-                    //   if(value == null || value.isEmpty){
-                    //     return "* Required";
-                    //   }
-                    //   return null;
-                    // },
                   ),
                 ),
                 CheckboxListTile(

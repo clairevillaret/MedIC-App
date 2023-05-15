@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:medic/user%20side/hospital_search.dart';
 
 class ShowAvailability extends StatelessWidget {
   final DocumentSnapshot documentSnapshot;
@@ -16,7 +17,6 @@ class ShowAvailability extends StatelessWidget {
             iconSize: 25.0,
             onPressed: () {
               Navigator.pop(context);
-              //Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
             },
           ),
           title: const Text("Availability of Services",
@@ -37,8 +37,9 @@ class ShowAvailability extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50.0,
-                    backgroundImage: NetworkImage(documentSnapshot['Pic_url']),
                     backgroundColor: Colors.transparent,
+                    backgroundImage: const AssetImage('images/placeholder.png'), // Placeholder
+                    foregroundImage: NetworkImage(documentSnapshot['Pic_url']), // Pr
                   ),
                   const SizedBox(width: 8.0),
                   Expanded(

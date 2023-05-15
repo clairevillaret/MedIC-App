@@ -64,6 +64,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
         // add the patient to the database of that hospital
         String name = context.read<SaveTriageResults>().userName;
         String birthday = context.read<SaveTriageResults>().userBirthday;
+        String number = context.read<SaveTriageResults>().userNumber;
         String age = context.read<SaveTriageResults>().userAge;
         String sex = context.read<SaveTriageResults>().userSex;
         String address = context.read<SaveTriageResults>().userAddress;
@@ -76,8 +77,9 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
         String userLong = context.read<SaveTriageResults>().userLongitude;
 
         await patients.add({
-          'Name:': name,
+          'Name': name,
           'Birthday': birthday,
+          'Contact Number': number,
           'Sex': sex,
           'Main Concerns': mainConcern,
           'Symptoms': symptoms.toList(),
@@ -409,6 +411,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
             ),
             onPressed: (){
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+              deletePreviousRecord(userId);
             },
             child: const Text('CONFIRM ARRIVAL',
               style: TextStyle(

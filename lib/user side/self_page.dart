@@ -29,6 +29,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
 
   var userName = '';
   var userBirthday = '';
+  var userNumber = '';
   final bdayController = TextEditingController();
   final ageController = TextEditingController();
   final addressController = TextEditingController();
@@ -112,6 +113,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
     Provider.of<SaveTriageResults>(context, listen: false).saveStatus(status);
     Provider.of<SaveTriageResults>(context, listen: false).saveUserLatitude(userLat.toString());
     Provider.of<SaveTriageResults>(context, listen: false).saveUserLongitude(userLong.toString());
+    Provider.of<SaveTriageResults>(context, listen: false).saveNumber(userNumber.toString());
 
   }
 
@@ -181,7 +183,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
               iconSize: 25.0,
               onPressed: () {
                 //Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const FellowSelf()),  (Route<dynamic> route) => false,);
               },
             ),
             title: const Text("Triage Form",
@@ -219,6 +221,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                         else if(snapshot.connectionState == ConnectionState.done) {
                           userName = snapshot.data?.docs[0].get('Full Name');
                           userBirthday = snapshot.data?.docs[0].get('Birthdate');
+                          userNumber = snapshot.data?.docs[0].get('Contact Number');
                           return ListView.builder(
                             itemCount: snapshot.data!.docs.length,
                             shrinkWrap: true,
@@ -251,6 +254,23 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                       Expanded(
                                         child: ListTile(
                                           title: Text(userBirthday,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Contact No.:",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          )),
+                                      Expanded(
+                                        child: ListTile(
+                                          title: Text(userNumber,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -316,12 +336,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       decoration: const InputDecoration(
                         labelText: 'Address',
                       ),
-                      // validator: (value) {
-                      //   if(value == null || value.isEmpty){
-                      //     return "* Required";
-                      //   }
-                      //   return null;
-                      // },
                     ),
                   ),
                   CheckboxListTile(
@@ -350,8 +364,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       decoration: const InputDecoration(
                         hintText: "Please list your main health concerns / symptoms / problems.",
                         labelText: "Chief complaints",
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.circular(10.0)),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){

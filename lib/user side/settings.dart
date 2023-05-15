@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/home_screen.dart';
-import 'package:medic/user%20side/hospital_search.dart';
 import 'package:medic/user%20side/login_page.dart';
 
 
@@ -23,32 +22,20 @@ class _SettingsPageState extends State<SettingsPage>{
     return Scaffold(
           appBar: AppBar(
             backgroundColor: const Color(0xFFba181b),
+            leading: IconButton(
+              color: Colors.white,
+              icon: const Icon(Icons.arrow_back),
+              iconSize: 25.0,
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomeScreen()),  (Route<dynamic> route) => false,);
+              },
+            ),
             title: const Text("Settings",
               style: TextStyle(
                 fontSize: 20.0,
                 letterSpacing: 2.0,
               ),
             ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSearch()));
-                },
-                icon: const Icon(Icons.search,color: Colors.white,),
-              ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-                },
-                icon: const Icon(Icons.home,color: Colors.white,),
-              ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
-                },
-                icon: const Icon(Icons.settings,color: Colors.white,),
-              ),
-            ],
           ),
           backgroundColor: Colors.white,
           body: SingleChildScrollView(

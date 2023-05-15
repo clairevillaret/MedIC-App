@@ -340,7 +340,9 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
               side: const BorderSide(color: Colors.green, width: 2.0),
             ),
             onPressed: (){
+
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+              deletePreviousRecord(userId);
             },
             child: const Text('CONFIRM ARRIVAL',
               style: TextStyle(

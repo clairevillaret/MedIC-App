@@ -28,7 +28,7 @@ class _FellowSelfState extends State<FellowSelf>{
                 icon: const Icon(Icons.arrow_back),
                 iconSize: 25.0,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomeScreen()),  (Route<dynamic> route) => false,);
                 },
               ),
             title: const Text("MedIC",

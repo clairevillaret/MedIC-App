@@ -8,6 +8,7 @@ class SaveTriageResults extends ChangeNotifier {
   String userSex = "";
   String userBirthday = "";
   String userAddress = "";
+  String userNumber = "";
   String mainConcern = "";
   String triageCategory = "";
   String travelMode = "";
@@ -26,6 +27,7 @@ class SaveTriageResults extends ChangeNotifier {
   String get getSex => userSex;
   String get getBirthdate => userBirthday;
   String get getAddress => userAddress;
+  String get getNumber => userNumber;
   String get getConcerns => mainConcern;
   String get getTriageCategory =>triageCategory;
   String get getTravelMode => travelMode;
@@ -64,6 +66,11 @@ class SaveTriageResults extends ChangeNotifier {
 
   void saveBirthdate(String birthdate) {
     userBirthday = birthdate;
+    notifyListeners();
+  }
+
+  void saveNumber(String number){
+    userNumber = number;
     notifyListeners();
   }
 

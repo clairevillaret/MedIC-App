@@ -28,6 +28,14 @@ class _HospitalSearchState extends State<HospitalSearch> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFba181b),
+        leading: IconButton(
+          color: Colors.white,
+          icon: const Icon(Icons.arrow_back),
+          iconSize: 25.0,
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomeScreen()),  (Route<dynamic> route) => false,);
+          },
+        ),
         centerTitle: true,
         title: const Text(
           'Hospitals',
@@ -113,8 +121,9 @@ class _HospitalSearchState extends State<HospitalSearch> {
                 children: [
                   CircleAvatar(
                     radius: 50.0,
-                    backgroundImage: NetworkImage(documentSnapshot['Pic_url']),
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: Colors.white,
+                    backgroundImage: const AssetImage('images/placeholder.png'), // Placeholder
+                    foregroundImage: NetworkImage(documentSnapshot['Pic_url']), // Profile
                   ),
                   const SizedBox(width: 8.0),
                   Expanded(
