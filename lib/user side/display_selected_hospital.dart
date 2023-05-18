@@ -3,11 +3,15 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:medic/user%20side/UI%20screens/emergency_result.dart';
 import 'package:medic/user%20side/home_screen.dart';
+import 'package:medic/user%20side/private_widget.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
 import 'package:provider/provider.dart';
+
+import 'ambulance_widget.dart';
 
 
 class DisplaySelectedHospital extends StatefulWidget {
@@ -22,11 +26,14 @@ class DisplaySelectedHospital extends StatefulWidget {
 
 class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
   final CollectionReference patients = FirebaseFirestore.instance.collection('hospitals_patients');
+  final CollectionReference hospitals = FirebaseFirestore.instance.collection('hospitals');
+
   String hospital = "";
   String userId = "";
   late Timer timer;
   int time = 0;
-  bool timeRunning = false;
+  bool timeOver = false;
+  String paramedicID = "";
 
   @override
   void initState() {
@@ -34,14 +41,22 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     print("init state $userId");
     hospital = widget.currentHospital;
     print("init state $hospital");
-    //startTimer();
     super.initState();
   }
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) { });
-    //timer = Timer(const Duration(minutes: 6), () {});
-    timer.cancel();
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      time ++;
+      //print(time);
+      if (time == 360){
+        timer.cancel();
+        setState(() {
+          timeOver = true;
+          time = 0;
+        });
+        print(timeOver);
+      }
+    });
   }
 
   @override
@@ -51,6 +66,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
   }
 
   generatingForHospital(currentHospital, currentUid){
+    timeOver = false;
     Map hospitals = widget.hospitalList;
 
     hospitals.remove(currentHospital);
@@ -96,13 +112,17 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
           'requested_time': Timestamp.now(),
         }).then((value) {
           userId = value.id;
-          patients.doc(userId).update({"Status": "pending"});
+          if (hospitals.isNotEmpty){
+            patients.doc(userId).update({"Status": "pending"});
+            patients.doc(currentUid).update({"Status": "rejected"});
+          }else{
+            patients.doc(userId).update({"Status": "pending"});
+          }
           print(userId);
 
           setState(() {
             userId = value.id;
           });
-          //deletePreviousRecord(currentUid);
         });
       }
     });
@@ -112,6 +132,35 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     // delete patient record in last hospital
     patients.doc(previousUid).delete();
   }
+
+  Future<String> getValues() async {
+    String hospitalId = "";
+    List<String> hospitalIds = [];
+
+    QuerySnapshot hospitalsQuerySnapshot = await hospitals.where('Name', isEqualTo: hospital).get();
+    hospitalsQuerySnapshot.docs.forEach((DocumentSnapshot doc) {
+      hospitalIds.add(doc.id);
+    });
+    hospitalId = hospitalIds[0];
+    print("hospital id $hospitalId");
+
+    var acceptedPatient = hospitals.doc(hospitalId).collection('patient');
+
+    var docSnapshot = await acceptedPatient.doc(userId).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+
+      setState(() {
+        paramedicID = data!['paramedic_id'];
+      });
+      //paramedicId = data!['paramedic_id'];
+    }
+
+    print("paramedic $paramedicID");
+    return paramedicID;
+
+  }
+
 
 
   @override
@@ -132,82 +181,144 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                 return const Center(child: Text('Something went wrong, sorry.'));
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: Text("Loading..."));
+                return const Center(child: CircularProgressIndicator());
               }
               if (!snapshot.hasData) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
-              if(widget.hospitalList.length > 1) {
-                if (data!['Status'] == "pending"){
-                  startTimer();
-                  while(timer.tick < 360){
-                    print(timer.tick);
-                    return pendingWidget();
+              if(snapshot.hasData){
+                if(widget.hospitalList.length > 1) {
+                  if (data!['Status'] == "pending"){
+                    startTimer();
+                    if (!timeOver){
+                      return pendingWidget();
+                    }else if(timeOver){
+                      timer.cancel();
+                      print(timeOver);
+                      print("timer canceled");
+                      generatingForHospital(hospital, userId);
+
+                    }
                   }
-                  generatingForHospital(hospital, userId);
-                }
 
-                if (data['Status'] == "accepted"){
-                  timer.cancel();
+                  if (data['Status'] == "accepted"){
+                    timer.cancel();
+                    print(timeOver);
+                    print("timer canceled");
 
-                  var currentHospital = data['hospital_user_id'];
-                  if (data['Travel Mode'] == "AMBULANCE"){
-                    return ambulanceWidget(data: currentHospital);
+                    var currentHospital = data['hospital_user_id'];
+                    hospital = currentHospital;
+
+                    if (data['Travel Mode'] == "AMBULANCE"){
+                      SchedulerBinding.instance.addPostFrameCallback((_) async {
+                        paramedicID = await getValues();
+                        print(paramedicID);
+                        if (!mounted) return;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AmbulanceWidget(hospital: hospital, paramedicId: paramedicID, userId: userId,)));
+                        deletePreviousRecord(userId);
+                      });
+                    }
+                    else{
+                      SchedulerBinding.instance.addPostFrameCallback((_){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => PrivateWidget(hospital: hospital, userId: userId,)));
+                        deletePreviousRecord(userId);
+                      });
+                    }
+
                   }
-                  return privateWidget(data: currentHospital);
-                }
-                if (data['Status'] == "rejected"){
-                  timer.cancel();
 
-                  generatingForHospital(hospital, userId);
+                  if (data['Status'] == "rejected"){
+                    timer.cancel();
+                    print(timeOver);
+                    print("timer canceled");
+
+                    generatingForHospital(hospital, userId);
+                  }
+                }
+                else if (widget.hospitalList.length == 1){
+                  if (data!['Status'] == "pending"){
+                    startTimer();
+                    if (!timeOver){
+                      return pendingWidget();
+                    }else if(timeOver){
+                      timer.cancel();
+                      print(timeOver);
+                      print("timer canceled");
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
+                            child: Text("Sorry, we didn't find any hospital that can accommodate you as of the moment."),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                            child: Text("Please wait for a few more minutes and try selecting a hospital again."),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Go back"),
+                          )
+
+                        ],
+                      );
+                    }
+                  }
+                  if (data['Status'] == "accepted"){
+                    timer.cancel();
+                    print(timeOver);
+                    print("timer canceled");
+
+                    var currentHospital = data['hospital_user_id'];
+
+                    if (data['Travel Mode'] == "AMBULANCE"){
+                      SchedulerBinding.instance.addPostFrameCallback((_) async {
+                        paramedicID = await getValues();
+                        print(paramedicID);
+                        if (!mounted) return;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AmbulanceWidget(hospital: currentHospital, paramedicId: paramedicID, userId: userId,)));
+                      });
+                    }
+                    else{
+                      SchedulerBinding.instance.addPostFrameCallback((_){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => PrivateWidget(hospital: currentHospital, userId: userId,)));
+                      });
+                    }
+
+                  }
+                  if (data['Status'] == "rejected"){
+                    timer.cancel();
+                    print(timeOver);
+                    print("timer canceled");
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
+                          child: Text("Sorry, we didn't find any hospital that can accommodate you as of the moment."),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                          child: Text("Please wait for a few more minutes and try selecting a hospital again."),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            //deletePreviousRecord(userId);
+                          },
+                          child: const Text("Go back"),
+                        )
+                      ],
+                    );
+                  }
                 }
               }
-              else if (widget.hospitalList.length == 1){
-                if (data!['Status'] == "pending"){
-                  startTimer();
-                  while(timer.tick < 360){
-                    print(timer.tick);
-                    return pendingWidget();
-                  }
-                  generatingForHospital(hospital, userId);
-                }
-                if (data['Status'] == "accepted"){
-                  timer.cancel();
 
-                  var currentHospital = data['hospital_user_id'];
-                  if (data['Travel Mode'] == "AMBULANCE"){
-                    return ambulanceWidget(data: currentHospital);
-                  }
-                  return privateWidget(data: currentHospital);
-
-                }
-                if (data['Status'] == "rejected"){
-                  timer.cancel();
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
-                        child: Text("Sorry, we didn't find any hospital that can accommodate you as of the moment."),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
-                        child: Text("Please wait for a few more minutes and try selecting a hospital again."),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          //deletePreviousRecord(userId);
-                        },
-                        child: const Text("Go back"),
-                      )
-
-                    ],
-                  );
-                }
-              }
-              return const Center(child: Text('Loading..'));
+              return const Center(child: CircularProgressIndicator());
             }
         )
     );
