@@ -287,11 +287,13 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                         print(paramedicID);
                         if (!mounted) return;
                         Navigator.push(context, MaterialPageRoute(builder: (context) => AmbulanceWidget(hospital: currentHospital, paramedicId: paramedicID, userId: userId,)));
+                        deletePreviousRecord(userId);
                       });
                     }
                     else{
                       SchedulerBinding.instance.addPostFrameCallback((_){
                         Navigator.push(context, MaterialPageRoute(builder: (context) => PrivateWidget(hospital: currentHospital, userId: userId,)));
+                        deletePreviousRecord(userId);
                       });
                     }
 
