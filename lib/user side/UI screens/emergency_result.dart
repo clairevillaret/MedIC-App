@@ -29,6 +29,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
   String userLat = "";
   String userLong = "";
   String userID = "";
+  bool isLoading = false;
 
   Map<String, dynamic> hospitalMap = {};
 
@@ -89,7 +90,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                 icon: const Icon(Icons.arrow_back),
                 iconSize: 25.0,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SelfAutofill()));
+                  Navigator.of(context).pop();
                 },
               ),
               title: const Text("MedIC",
@@ -257,7 +258,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       side: const BorderSide(color: Color(0xFFba181b)),
                     ),
                     onPressed: (){
-                      //if (_formKey.currentState!.validate()){
+
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const HospitalSelect()));
                       //}
                     },

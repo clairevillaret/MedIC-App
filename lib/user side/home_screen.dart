@@ -110,6 +110,27 @@ class _HomeScreenState extends State<HomeScreen>{
                     alignment: Alignment.center,
                     children: [
                       Container(
+                        height: 280.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: const [
+                            Text('press this button ',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Color(0xFFba181b),
+                              ),),
+                            Icon(Icons.arrow_downward,color: Color(0xFFba181b), size: 20.0,),
+                            Text(' for emergency',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Color(0xFFba181b),
+                              ),),
+                          ],
+                        ),
+                      ),
+                      Container(
                         //margin: const EdgeInsets.fromLTRB(0.0, 90.0, 0.0, 50.0),
                         height: 150,
                         width: double.infinity,

@@ -78,7 +78,7 @@ class _PrivateWidgetState extends State<PrivateWidget> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 50.0,),
-            const Text("Thank you, we will be waiting for you arrival at the hospital.",
+            const Text("Thank you, we will be waiting for your arrival at the hospital.",
               style: TextStyle(
                 fontSize: 20.0,
                 color: Colors.black54,

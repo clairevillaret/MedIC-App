@@ -81,14 +81,10 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
     var acceptedPatient = hospitals.doc(hospitalId).collection('patient');
 
     var docSnapshot = await acceptedPatient.doc(userId).get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data();
-
-      setState(() {
-        paramedicID = data!['paramedic_id'];
-      });
-      //paramedicId = data!['paramedic_id'];
-    }
+    Map<String, dynamic>? data = docSnapshot.data();
+    setState(() {
+      paramedicID = data!['paramedic_id'];
+    });
 
     print("paramedic $paramedicID");
     return paramedicID;

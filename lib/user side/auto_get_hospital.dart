@@ -28,10 +28,10 @@ class AutoGetHospital{
     try {
       var response = await Dio().get(url);
       if (response.statusCode == 200) {
-        //print(response.data);
+        // print(response.data);
         for (var row in response.data['rows']) {
           for (var element in row['elements']) {
-            //print(element['duration_in_traffic']['value']);
+            // print(element['duration_in_traffic']['text']);
             return (element['duration_in_traffic']['value']);
           }
         }

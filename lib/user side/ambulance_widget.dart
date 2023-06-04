@@ -115,7 +115,7 @@ class _AmbulanceWidgetState extends State<AmbulanceWidget> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20.0,),
-                  Text("Estimated Time Arrival: ${data!['time remaining']} mins",
+                  Text("Estimated to arrive in: ${data!['time remaining']}",
                     style: const TextStyle(
                       fontSize: 18.0,
                       color: Color(0xFFba181b),

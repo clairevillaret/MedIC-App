@@ -147,14 +147,19 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     var acceptedPatient = hospitals.doc(hospitalId).collection('patient');
 
     var docSnapshot = await acceptedPatient.doc(userId).get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data();
+    Map<String, dynamic>? data = docSnapshot.data();
+    setState(() {
+      paramedicID = data!['paramedic_id'];
+    });
 
-      setState(() {
-        paramedicID = data!['paramedic_id'];
-      });
-      //paramedicId = data!['paramedic_id'];
-    }
+    // if (docSnapshot.exists) {
+    //   Map<String, dynamic>? data = docSnapshot.data();
+    //
+    //   setState(() {
+    //     paramedicID = data!['paramedic_id'];
+    //   });
+    //   // paramedicID = data!['paramedic_id'];
+    // }
 
     print("paramedic $paramedicID");
     return paramedicID;
@@ -189,9 +194,10 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
               if(snapshot.hasData){
                 if(widget.hospitalList.length > 1) {
                   if (data!['Status'] == "pending"){
+                    var currentHospital = data['hospital_user_id'];
                     startTimer();
                     if (!timeOver){
-                      return pendingWidget();
+                      return pendingWidget(data: currentHospital);
                     }else if(timeOver){
                       timer.cancel();
                       print(timeOver);
@@ -237,9 +243,10 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                 }
                 else if (widget.hospitalList.length == 1){
                   if (data!['Status'] == "pending"){
+                    var currentHospital = data['hospital_user_id'];
                     startTimer();
                     if (!timeOver){
-                      return pendingWidget();
+                      return pendingWidget(data: currentHospital);
                     }else if(timeOver){
                       timer.cancel();
                       print(timeOver);
@@ -324,13 +331,15 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     );
   }
 
-  Widget pendingWidget() {
+  Widget pendingWidget({required data}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Text("We are currently contacting the nearest hospital that can accommodate you..."),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text("We are currently contacting $data, please wait for a moment...",
+          ),
         ),
         TextButton(
           onPressed: () {

@@ -92,7 +92,7 @@ class _PriorityResultState extends State<PriorityResult> {
                 icon: const Icon(Icons.arrow_back),
                 iconSize: 25.0,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SelfAutofill()));
+                  Navigator.of(context).pop();
                 },
               ),
               title: const Text("MedIC",

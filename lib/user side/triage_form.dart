@@ -47,8 +47,9 @@ class _TriageFormState extends State<TriageForm> {
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
-  bool checkBoxValue = false;
+  bool checkBoxValue = true;
   bool deviceLocation = false;
+  bool isLoading = false;
 
 
   bool checkAll = false;
@@ -277,6 +278,9 @@ class _TriageFormState extends State<TriageForm> {
                         validator: (value){
                           if(value == null || value.isEmpty){
                             return "* Required";
+                          }
+                          else if(int.parse(value) > 110){
+                            return "enter a valid age";
                           }
                           return null;
                         },
@@ -523,9 +527,9 @@ class _TriageFormState extends State<TriageForm> {
                           element.selected = value;
                           element.selected
                               ? () {context.read<SaveTriageResults>().addSymptom(element.name);
-                            countEmergency+=1;}()
+                          countEmergency+=1;}()
                               : () {context.read<SaveTriageResults>().removeSymptom(element.name);
-                            countEmergency-=1;}();
+                          countEmergency-=1;}();
                         }
                         print(selectedItems);
                       });
@@ -549,9 +553,9 @@ class _TriageFormState extends State<TriageForm> {
                             }
                             value
                                 ? () {context.read<SaveTriageResults>().addSymptom(disability[index].name);
-                              countEmergency+=1;}()
+                            countEmergency+=1;}()
                                 : () {context.read<SaveTriageResults>().removeSymptom(disability[index].name);
-                              countEmergency-=1;}();
+                            countEmergency-=1;}();
                             print(selectedItems);
                           });
                         }
@@ -570,9 +574,9 @@ class _TriageFormState extends State<TriageForm> {
                           element.selected = value;
                           element.selected
                               ? () {context.read<SaveTriageResults>().addSymptom(element.name);
-                            countEmergency+=1;}()
+                          countEmergency+=1;}()
                               : () {context.read<SaveTriageResults>().removeSymptom(element.name);
-                            countEmergency-=1;}();
+                          countEmergency-=1;}();
                         }
                         print(selectedItems);
                       });
@@ -596,9 +600,9 @@ class _TriageFormState extends State<TriageForm> {
                             }
                             value
                                 ? () {context.read<SaveTriageResults>().addSymptom(lifeThreats[index].name);
-                              countEmergency+=1;}()
+                            countEmergency+=1;}()
                                 : () {context.read<SaveTriageResults>().removeSymptom(lifeThreats[index].name);
-                              countEmergency-=1;}();
+                            countEmergency-=1;}();
                             print(selectedItems);
                           });
                         }
@@ -708,30 +712,55 @@ class _TriageFormState extends State<TriageForm> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        if (addressController.text.isNotEmpty || deviceLocation) {
-                          setState(() {
-                            currentAddress = addressController.text;
-                            userLat = userLocation?.latitude;
-                            userLong = userLocation?.longitude;
-                          });
+                        if (addressController.text.isNotEmpty || checkBoxValue) {
+                          if (privateVehicle || requestAmbulance){
 
-                          if (deviceLocation) {
-                            currentAddress = await getAddress(userLat, userLong);
-                          } else {
-                            userLat = await getLatitude(currentAddress);
-                            userLong = await getLongitude(currentAddress);
+                            if (checkBoxValue) {
+                              deviceLocation = true;
+                              userLocation = await GetLocation()
+                                  .determinePosition();
+                            }else{
+                              deviceLocation = false;
+                              addressController.text = addressController.text;
+                            }
+
+                            setState(() {
+                              isLoading = true;
+                            });
+                            Future.delayed(const Duration(seconds: 3),(){
+                              setState(() {
+                                isLoading = false;
+                              });
+                            });
+                            setState(() {
+                              currentAddress = addressController.text;
+                              userLat = userLocation?.latitude;
+                              userLong = userLocation?.longitude;
+                            });
+
+                            if (deviceLocation) {
+                              currentAddress = await getAddress(userLat, userLong);
+                            } else {
+                              userLat = await getLatitude(currentAddress);
+                              userLong = await getLongitude(currentAddress);
+                            }
+
+                            generateTriageResults();
+                            saveTriageResults();
+                            print(travelMode);
+
+                          }else{
+                            Fluttertoast.showToast(msg: 'Please select your travel mode');
                           }
-
-                          generateTriageResults();
-                          saveTriageResults();
-
                         }else{
                           Fluttertoast.showToast(msg: 'Please provide your address');
                         }
-
+                      }else{
+                        Fluttertoast.showToast(msg: 'Please check if there are unanswered fields');
                       }
                     },
-                    child: const Text('Submit',
+                    child: isLoading? const CircularProgressIndicator(color: Colors.white,)
+                        : const Text('Submit',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15.0,

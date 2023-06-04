@@ -49,8 +49,9 @@ class _SelfAutofillState extends State<SelfAutofill>{
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
-  bool checkBoxValue = false;
+  bool checkBoxValue = true;
   bool deviceLocation = false;
+  bool isLoading = false;
 
   bool checkAll = false;
   bool checkAll2 = false;
@@ -300,6 +301,9 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             if(value == null || value.isEmpty){
                               return "* Required";
                             }
+                            else if(int.parse(value) > 110){
+                              return "enter a valid age";
+                            }
                             return null;
                           },
                         ),
@@ -345,7 +349,8 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       value: checkBoxValue,
                       onChanged: (value) {
                         setState(() {
-                          checkBoxValue = value!; //checkbox value is true
+                          checkBoxValue = value!;
+                          print(checkBoxValue);
                           checkBoxValue
                               ? () async { deviceLocation = true; userLocation = await GetLocation().determinePosition();
                             //getAddress(userLocation?.latitude, userLocation?.longitude);
@@ -726,30 +731,50 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       ),
                       onPressed: () async {
                         if (_formKey1.currentState!.validate()) {
-                          if (addressController.text.isNotEmpty || deviceLocation){
-                            setState(() {
-                              currentAddress = addressController.text;
-                              userLat = userLocation?.latitude;
-                              userLong = userLocation?.longitude;
-                            });
+                          if (addressController.text.isNotEmpty || checkBoxValue){
+                            if (privateVehicle || requestAmbulance){
 
-                            if (deviceLocation) {
-                              currentAddress = await getAddress(
-                                  userLat, userLong);
-                            } else {
-                              userLat = await getLatitude(currentAddress);
-                              userLong = await getLongitude(currentAddress);
+                              if (checkBoxValue) {
+                                deviceLocation = true;
+                                userLocation = await GetLocation()
+                                    .determinePosition();
+                              }else{
+                                deviceLocation = false;
+                                addressController.text = addressController.text;
+                              }
+
+                              setState(() {
+                                currentAddress = addressController.text;
+                                userLat = userLocation?.latitude;
+                                userLong = userLocation?.longitude;
+                              });
+
+                              if (deviceLocation) {
+                                currentAddress = await getAddress(
+                                    userLat, userLong);
+                              } else{
+                                userLat = await getLatitude(currentAddress);
+                                userLong = await getLongitude(currentAddress);
+                              }
+
+                              generateTriageResults();
+                              saveTriageResults();
+                              print(travelMode);
+
+                            }else{
+                              Fluttertoast.showToast(msg: 'Please select your travel mode');
                             }
-
-                            generateTriageResults();
-                            saveTriageResults();
                           }else{
                             Fluttertoast.showToast(msg: 'Please provide your address');
                           }
-
+                        }else{
+                          Fluttertoast.showToast(msg: 'Please check if there are unanswered fields');
                         }
                       },
-                      child: const Text('Submit',
+                      child:
+                          isLoading?
+                          const CircularProgressIndicator(color: Colors.white,)
+                          : const Text('Submit',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15.0,
