@@ -176,7 +176,57 @@ class _EmergencyResultState extends State<EmergencyResult> {
                         borderRadius: BorderRadius.circular(30.0),
                         side: const BorderSide(color: Color(0xFFba181b), width: 1.5),
                       ),
-                    child: Row(
+                    onPressed: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      Future.delayed(const Duration(seconds: 3),(){
+                        setState(() {
+                          isLoading = false;
+                        });
+                      });
+
+                      if (widget.deviceLocation == true){
+                        userLat = context.read<SaveTriageResults>().userLatitude;
+                        userLong = context.read<SaveTriageResults>().userLongitude;
+                        hospitalMap = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
+                        print("hospital list: $hospitalMap");
+
+                        var nearest = hospitalMap.values.cast<num>().reduce(min);
+                        hospitalMap.forEach((key, value) {
+                          if (value == nearest) {
+                            nearestHospital = key;
+                          }
+                        });
+                        print(nearestHospital);
+
+                        userID = await createDocument(nearestHospital);
+
+                        if (!mounted) return;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+
+                      }else{
+
+                        userAddress = context.read<SaveTriageResults>().userAddress;
+                        hospitalMap = await ManualGetHospital(userAddress).main();
+                        print("hospital list: $hospitalMap");
+
+                        var nearest = hospitalMap.values.cast<num>().reduce(min);
+                        hospitalMap.forEach((key, value) {
+                          if (value == nearest) {
+                            nearestHospital = key;
+                          }
+                        });
+                        print(nearestHospital);
+
+                        userID = await createDocument(nearestHospital);
+
+                        if (!mounted) return;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
+                      }
+                    },
+                    child: isLoading? const CircularProgressIndicator(color: Colors.black,)
+                    : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -208,45 +258,6 @@ class _EmergencyResultState extends State<EmergencyResult> {
                         ),
                       ],
                     ),
-                      onPressed: () async {
-                        if (widget.deviceLocation == true){
-                          userLat = context.read<SaveTriageResults>().userLatitude;
-                          userLong = context.read<SaveTriageResults>().userLongitude;
-                          hospitalMap = await AutoGetHospital(startLat: userLat, startLong: userLong).main();
-                          print("hospital list: $hospitalMap");
-
-                          var nearest = hospitalMap.values.cast<num>().reduce(min);
-                          hospitalMap.forEach((key, value) {
-                            if (value == nearest) {
-                              nearestHospital = key;
-                            }
-                          });
-                          print(nearestHospital);
-
-                          userID = await createDocument(nearestHospital);
-
-                          if (!mounted) return;
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
-
-                        }else{
-                          userAddress = context.read<SaveTriageResults>().userAddress;
-                          hospitalMap = await ManualGetHospital(userAddress).main();
-                          print("hospital list: $hospitalMap");
-
-                          var nearest = hospitalMap.values.cast<num>().reduce(min);
-                          hospitalMap.forEach((key, value) {
-                            if (value == nearest) {
-                              nearestHospital = key;
-                            }
-                          });
-                          print(nearestHospital);
-
-                          userID = await createDocument(nearestHospital);
-
-                          if (!mounted) return;
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => DisplaySelectedHospital(hospitalList: hospitalMap, currentHospital: nearestHospital, userID: userID,)));
-                        }
-                      }
                   ),
                   const SizedBox(height: 10.0,),
                   RawMaterialButton(

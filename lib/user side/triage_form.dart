@@ -262,6 +262,12 @@ class _TriageFormState extends State<TriageForm> {
                       if(value == null || value.isEmpty){
                         return "* Required";
                       }
+                      else{
+                        int? parsedValue = int.tryParse(value);
+                        if(parsedValue == null) {
+                          return "enter a valid contact number";
+                        }
+                      }
                       return null;
                     },
                   ),
@@ -279,8 +285,14 @@ class _TriageFormState extends State<TriageForm> {
                           if(value == null || value.isEmpty){
                             return "* Required";
                           }
-                          else if(int.parse(value) > 110){
-                            return "enter a valid age";
+                          else{
+                            int? parsedValue = int.tryParse(value);
+                            if(parsedValue == null) {
+                              return "enter a valid age";
+                            }
+                            else if (parsedValue > 110){
+                              return "enter a valid age";
+                            }
                           }
                           return null;
                         },
@@ -732,6 +744,7 @@ class _TriageFormState extends State<TriageForm> {
                                 isLoading = false;
                               });
                             });
+
                             setState(() {
                               currentAddress = addressController.text;
                               userLat = userLocation?.latitude;

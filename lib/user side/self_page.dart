@@ -30,9 +30,9 @@ class _SelfAutofillState extends State<SelfAutofill>{
   var userName = '';
   var userBirthday = '';
   var userNumber = '';
+  var address = '';
   final bdayController = TextEditingController();
   final ageController = TextEditingController();
-  final addressController = TextEditingController();
 
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
 
@@ -79,12 +79,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
     return listSymptoms.toList();
   }
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    addressController.dispose();
-    super.dispose();
-  }
 
   generateTriageResults() {
     if (countEmergency > 0) {
@@ -301,8 +295,14 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             if(value == null || value.isEmpty){
                               return "* Required";
                             }
-                            else if(int.parse(value) > 110){
-                              return "enter a valid age";
+                            else{
+                              int? parsedValue = int.tryParse(value);
+                              if(parsedValue == null) {
+                                return "enter a valid age";
+                              }
+                              else if (parsedValue > 110){
+                                return "enter a valid age";
+                              }
                             }
                             return null;
                           },
@@ -332,16 +332,8 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 0.0, top: 0.0, right: 0.0, bottom: 8.0),
-                    child: TextFormField(
-                      controller: addressController,
-                      enabled: !checkBoxValue,
-                      decoration: const InputDecoration(
-                        labelText: 'Address',
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 20.0,),
+                  const Text("Address:", style: TextStyle(fontSize: 16.0),),
                   CheckboxListTile(
                       title: const Text("Get my device's location"),
                       contentPadding: const EdgeInsets.all(0.0),
@@ -355,9 +347,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                               ? () async { deviceLocation = true; userLocation = await GetLocation().determinePosition();
                             //getAddress(userLocation?.latitude, userLocation?.longitude);
                           }()
-                              : () { deviceLocation = false; addressController.text = addressController.text;
-                            //getCoordinates(addressController.text);
-                          }();
+                              : () { deviceLocation = false; address = "";}();
                         });
                       }
                   ),
@@ -731,20 +721,25 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       ),
                       onPressed: () async {
                         if (_formKey1.currentState!.validate()) {
-                          if (addressController.text.isNotEmpty || checkBoxValue){
+                          if (address != "" || checkBoxValue){
                             if (privateVehicle || requestAmbulance){
+
+                              setState(() {
+                                isLoading = true;
+                              });
+                              Future.delayed(const Duration(seconds: 3),(){
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              });
 
                               if (checkBoxValue) {
                                 deviceLocation = true;
                                 userLocation = await GetLocation()
                                     .determinePosition();
-                              }else{
-                                deviceLocation = false;
-                                addressController.text = addressController.text;
                               }
 
                               setState(() {
-                                currentAddress = addressController.text;
                                 userLat = userLocation?.latitude;
                                 userLong = userLocation?.longitude;
                               });
@@ -752,9 +747,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
                               if (deviceLocation) {
                                 currentAddress = await getAddress(
                                     userLat, userLong);
-                              } else{
-                                userLat = await getLatitude(currentAddress);
-                                userLong = await getLongitude(currentAddress);
                               }
 
                               generateTriageResults();
@@ -771,9 +763,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                           Fluttertoast.showToast(msg: 'Please check if there are unanswered fields');
                         }
                       },
-                      child:
-                          isLoading?
-                          const CircularProgressIndicator(color: Colors.white,)
+                      child: isLoading? const CircularProgressIndicator(color: Colors.white,)
                           : const Text('Submit',
                         style: TextStyle(
                           color: Colors.white,
@@ -790,24 +780,6 @@ class _SelfAutofillState extends State<SelfAutofill>{
           ),
         )
     );
-  }
-
-  getLatitude(address) async {
-    List<Location> locations = await locationFromAddress(address);
-    setState(() {
-      userLat = locations.first.latitude;
-    });
-    print(userLat);
-    return userLat;
-  }
-
-  getLongitude(address) async {
-    List<Location> locations = await locationFromAddress(address);
-    setState(() {
-      userLong = locations.first.longitude;
-    });
-    print(userLong);
-    return userLong;
   }
 
   getAddress(lat, long) async {

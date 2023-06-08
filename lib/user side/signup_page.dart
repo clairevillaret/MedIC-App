@@ -216,6 +216,12 @@ class _SignupPageState extends State<SignupPage> {
                         if(value == null || value.isEmpty){
                           return "* Required";
                         }
+                        else{
+                          int? parsedValue = int.tryParse(value);
+                          if(parsedValue == null) {
+                            return "enter a valid contact number";
+                          }
+                        }
                         return null;
                       },
                     ),
