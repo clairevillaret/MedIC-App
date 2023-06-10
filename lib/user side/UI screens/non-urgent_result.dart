@@ -151,6 +151,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
                         fontSize: 30.0,
                         fontWeight: FontWeight.w500
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 25.0,),
                   const Text("Can wait in the queue",
@@ -184,7 +185,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
                       setState(() {
                         isLoading = true;
                       });
-                      Future.delayed(const Duration(seconds: 3),(){
+                      Future.delayed(const Duration(seconds: 5),(){
                         setState(() {
                           isLoading = false;
                         });

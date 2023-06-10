@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -144,7 +145,6 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
                       ],
                     );
                   }
-
                 }
 
                 if (data['Status'] == "accepted"){
@@ -170,6 +170,16 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
                       });
                     }
                   }
+
+                if (data['Status'] == "No Ambulance"){
+                  timer.cancel();
+                  print(timeOver);
+                  print("timer canceled");
+                  SchedulerBinding.instance.addPostFrameCallback((_) async {
+                    var currentHospital = data['hospital_user_id'];
+                    noAmbulance(data: currentHospital);
+                  });
+                }
 
                 if (data['Status'] == "rejected"){
                   timer.cancel();
@@ -214,13 +224,10 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
         ),
         TextButton(
           onPressed: () {
-            showDialog(context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Are you sure you want to cancel the request?",
-                    style: TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.bold,
-                    ),),
+            showCupertinoDialog<String>(
+                context: context,
+                builder: (context) => CupertinoAlertDialog(
+                  title: const Text("Are you sure you want to cancel the request?"),
                   actions: [
                     TextButton(onPressed: () {
                       timer.cancel();
@@ -247,6 +254,36 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
         ),
 
       ],
+    );
+  }
+
+  Object noAmbulance({required data}) {
+    return showCupertinoDialog<String>(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("$data has no available ambulance as of the moment"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                patients.doc(userId).update({"Status": "pending"});
+                patients.doc(userId).update({"Travel Mode": "Private Vehicle"});
+
+
+              },
+              child: const Text("Switch to private vehicle", textAlign: TextAlign.center,),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                patients.doc(userId).update({"Status": "rejected"});
+              },
+              child: const Text("Cancel request"),
+            ),
+
+          ],
+        )
     );
   }
 

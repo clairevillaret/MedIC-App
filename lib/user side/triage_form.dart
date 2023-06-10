@@ -57,6 +57,7 @@ class _TriageFormState extends State<TriageForm> {
   bool checkAll3 = false;
   bool checkAll4 = false;
   bool checkAll5 = false; //priority signs (bleeding)
+  bool nonUrgent = false;
   List<CheckboxModel> airwayBreathing = <CheckboxModel>[];
   List<CheckboxModel> circulation = <CheckboxModel>[];
   List<CheckboxModel> disability = <CheckboxModel>[];
@@ -87,7 +88,8 @@ class _TriageFormState extends State<TriageForm> {
       if (!mounted) return;
       triageResult = "Priority Case";
       Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityResult(deviceLocation: deviceLocation)));
-    } else {
+    } else if (nonUrgent){
+      if (!mounted) return;
       triageResult = "Non-urgent Case";
       Navigator.push(context, MaterialPageRoute(builder: (context) => NonUrgentResult(deviceLocation: deviceLocation)));
     }
@@ -708,7 +710,29 @@ class _TriageFormState extends State<TriageForm> {
                     );
                   },
                 ),
-
+                const Divider(
+                  color: Colors.black12,
+                  thickness: 2.0,
+                ),
+                CheckboxListTile(
+                    title: const Text("OTHERS",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),),
+                    contentPadding: const EdgeInsets.all(0.0),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: nonUrgent,
+                    onChanged: (value) {
+                      setState(() {
+                        nonUrgent = value!;
+                      });
+                    }
+                ),
+                const Divider(
+                  color: Colors.black12,
+                  thickness: 2.0,
+                ),
 
                 Container(
                   width: double.infinity,
@@ -726,42 +750,45 @@ class _TriageFormState extends State<TriageForm> {
                       if (_formKey.currentState!.validate()) {
                         if (addressController.text.isNotEmpty || checkBoxValue) {
                           if (privateVehicle || requestAmbulance){
-
-                            if (checkBoxValue) {
-                              deviceLocation = true;
-                              userLocation = await GetLocation()
-                                  .determinePosition();
+                            if (countEmergency == 0 && countPriority == 0 && !nonUrgent){
+                              Fluttertoast.showToast(msg: 'Please make sure you have selected applicable signs or symptoms');
                             }else{
-                              deviceLocation = false;
-                              addressController.text = addressController.text;
-                            }
-
-                            setState(() {
-                              isLoading = true;
-                            });
-                            Future.delayed(const Duration(seconds: 3),(){
                               setState(() {
-                                isLoading = false;
+                                isLoading = true;
                               });
-                            });
+                              Future.delayed(const Duration(seconds: 3),(){
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              });
 
-                            setState(() {
-                              currentAddress = addressController.text;
-                              userLat = userLocation?.latitude;
-                              userLong = userLocation?.longitude;
-                            });
+                              if (checkBoxValue) {
+                                deviceLocation = true;
+                                userLocation = await GetLocation()
+                                    .determinePosition();
+                              }else{
+                                deviceLocation = false;
+                                addressController.text = addressController.text;
+                              }
 
-                            if (deviceLocation) {
-                              currentAddress = await getAddress(userLat, userLong);
-                            } else {
-                              userLat = await getLatitude(currentAddress);
-                              userLong = await getLongitude(currentAddress);
+                              setState(() {
+                                currentAddress = addressController.text;
+                                userLat = userLocation?.latitude;
+                                userLong = userLocation?.longitude;
+                              });
+
+                              if (deviceLocation) {
+                                currentAddress = await getAddress(userLat, userLong);
+                              } else {
+                                userLat = await getLatitude(currentAddress);
+                                userLong = await getLongitude(currentAddress);
+                              }
+
+                              generateTriageResults();
+                              saveTriageResults();
+                              print(travelMode);
+
                             }
-
-                            generateTriageResults();
-                            saveTriageResults();
-                            print(travelMode);
-
                           }else{
                             Fluttertoast.showToast(msg: 'Please select your travel mode');
                           }

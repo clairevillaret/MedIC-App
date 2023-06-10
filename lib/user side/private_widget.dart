@@ -14,6 +14,7 @@ class PrivateWidget extends StatefulWidget {
 
 class _PrivateWidgetState extends State<PrivateWidget> {
   final CollectionReference patients = FirebaseFirestore.instance.collection('hospitals_patients');
+  final CollectionReference hospitals = FirebaseFirestore.instance.collection('hospitals');
   String hospital = "";
   String userId = "";
 
@@ -25,6 +26,23 @@ class _PrivateWidgetState extends State<PrivateWidget> {
     print("init state $userId");
     super.initState();
   }
+
+  void updatePatientDoc() async{
+    String hospitalId = "";
+    List<String> hospitalIds = [];
+
+    QuerySnapshot hospitalsQuerySnapshot = await hospitals.where('Name', isEqualTo: hospital).get();
+    hospitalsQuerySnapshot.docs.forEach((DocumentSnapshot doc) {
+      hospitalIds.add(doc.id);
+    });
+    hospitalId = hospitalIds[0];
+    print("hospital id $hospitalId");
+
+    hospitals.doc(hospitalId).collection('patient').doc(userId).update({"Status": "In-patient"});
+    hospitals.doc(hospitalId).collection('patient').doc(userId).update({"Service in use": "Emergency Room"});
+
+  }
+
 
   deletePreviousRecord(previousUid) {
     // delete patient record in last hospital
@@ -106,6 +124,7 @@ class _PrivateWidgetState extends State<PrivateWidget> {
               onPressed: (){
 
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const HomeScreen()),(route) => false);
+                updatePatientDoc();
                 deletePreviousRecord(userId);
               },
               child: const Text('CONFIRM ARRIVAL',

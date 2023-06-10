@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/display_manual_hospital.dart';
 import 'package:medic/user%20side/saveTriageResults_class.dart';
@@ -238,9 +239,9 @@ class _HospitalSelectState extends State<HospitalSelect> {
                   ],
                 ),
                 onPressed: () {
-                  showDialog(
+                  showCupertinoDialog<String>(
                     context: context,
-                    builder: (context) => AlertDialog(
+                    builder: (context) => CupertinoAlertDialog(
                       title: const Text("Select this hospital",
                         style: TextStyle(
                           fontSize: 25.0,
@@ -258,14 +259,14 @@ class _HospitalSelectState extends State<HospitalSelect> {
                             Navigator.of(context).pop();
                             Navigator.push(context, MaterialPageRoute(builder: (context) => ManualDisplayHospital(currentHospital:selectedHospital, userID: userID,)));
                           },
-                          child: const Text("YES",
+                          child: const Text("Yes",
                             style: TextStyle(fontSize: 25.0),),
                         ),
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text("NO",
+                          child: const Text("No",
                             style: TextStyle(fontSize: 25.0),),
                         ),
                       ],

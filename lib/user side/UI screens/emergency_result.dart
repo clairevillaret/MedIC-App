@@ -147,6 +147,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                         fontSize: 30.0,
                         fontWeight: FontWeight.w500
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 25.0,),
                   const Text("Needs Immediate Treatment",
@@ -180,7 +181,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       setState(() {
                         isLoading = true;
                       });
-                      Future.delayed(const Duration(seconds: 3),(){
+                      Future.delayed(const Duration(seconds: 5),(){
                         setState(() {
                           isLoading = false;
                         });

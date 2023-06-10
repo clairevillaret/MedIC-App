@@ -58,6 +58,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
   bool checkAll3 = false;
   bool checkAll4 = false;
   bool checkAll5 = false; //priority signs (bleeding)
+  bool nonUrgent = false;
   List<CheckboxModel> airwayBreathing = <CheckboxModel>[];
   List<CheckboxModel> circulation = <CheckboxModel>[];
   List<CheckboxModel> disability = <CheckboxModel>[];
@@ -89,7 +90,8 @@ class _SelfAutofillState extends State<SelfAutofill>{
       if (!mounted) return;
       triageResult = "Priority Case";
       Navigator.push(context, MaterialPageRoute(builder: (context) => PriorityResult(deviceLocation: deviceLocation)));
-    } else {
+    } else if (nonUrgent){
+      if (!mounted) return;
       triageResult = "Non-urgent Case";
       Navigator.push(context, MaterialPageRoute(builder: (context) => NonUrgentResult(deviceLocation: deviceLocation)));
     }
@@ -205,6 +207,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       color: Color(0xFFba181b),
                       height: 1.5,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10.0,),
                   FutureBuilder(
@@ -706,6 +709,29 @@ class _SelfAutofillState extends State<SelfAutofill>{
                       );
                     },
                   ),
+                  const Divider(
+                    color: Colors.black12,
+                    thickness: 2.0,
+                  ),
+                  CheckboxListTile(
+                      title: const Text("OTHERS",
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                        ),),
+                      contentPadding: const EdgeInsets.all(0.0),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: nonUrgent,
+                      onChanged: (value) {
+                        setState(() {
+                         nonUrgent = value!;
+                        });
+                      }
+                  ),
+                  const Divider(
+                    color: Colors.black12,
+                    thickness: 2.0,
+                  ),
 
                   Container(
                     width: double.infinity,
@@ -723,35 +749,38 @@ class _SelfAutofillState extends State<SelfAutofill>{
                         if (_formKey1.currentState!.validate()) {
                           if (address != "" || checkBoxValue){
                             if (privateVehicle || requestAmbulance){
-
-                              setState(() {
-                                isLoading = true;
-                              });
-                              Future.delayed(const Duration(seconds: 3),(){
+                              if (countEmergency == 0 && countPriority == 0 && !nonUrgent) {
+                                Fluttertoast.showToast(msg: 'Please make sure you have selected applicable signs or symptoms');
+                              }else{
                                 setState(() {
-                                  isLoading = false;
+                                  isLoading = true;
                                 });
-                              });
+                                Future.delayed(const Duration(seconds: 3),(){
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                });
 
-                              if (checkBoxValue) {
-                                deviceLocation = true;
-                                userLocation = await GetLocation()
-                                    .determinePosition();
+                                if (checkBoxValue) {
+                                  deviceLocation = true;
+                                  userLocation = await GetLocation()
+                                      .determinePosition();
+                                }
+
+                                setState(() {
+                                  userLat = userLocation?.latitude;
+                                  userLong = userLocation?.longitude;
+                                });
+
+                                if (deviceLocation) {
+                                  currentAddress = await getAddress(
+                                      userLat, userLong);
+                                }
+
+                                generateTriageResults();
+                                saveTriageResults();
+                                print(travelMode);
                               }
-
-                              setState(() {
-                                userLat = userLocation?.latitude;
-                                userLong = userLocation?.longitude;
-                              });
-
-                              if (deviceLocation) {
-                                currentAddress = await getAddress(
-                                    userLat, userLong);
-                              }
-
-                              generateTriageResults();
-                              saveTriageResults();
-                              print(travelMode);
 
                             }else{
                               Fluttertoast.showToast(msg: 'Please select your travel mode');

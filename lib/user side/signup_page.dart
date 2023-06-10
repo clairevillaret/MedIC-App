@@ -364,6 +364,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),),
                       RawMaterialButton(
                         constraints: const BoxConstraints(),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         onPressed: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
                         },

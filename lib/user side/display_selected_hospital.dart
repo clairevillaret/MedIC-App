@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
   int time = 0;
   bool timeOver = false;
   String paramedicID = "";
+
 
   @override
   void initState() {
@@ -152,20 +154,10 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
       paramedicID = data!['paramedic_id'];
     });
 
-    // if (docSnapshot.exists) {
-    //   Map<String, dynamic>? data = docSnapshot.data();
-    //
-    //   setState(() {
-    //     paramedicID = data!['paramedic_id'];
-    //   });
-    //   // paramedicID = data!['paramedic_id'];
-    // }
-
     print("paramedic $paramedicID");
     return paramedicID;
 
   }
-
 
 
   @override
@@ -225,12 +217,21 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                       });
                     }
                     else{
-                      SchedulerBinding.instance.addPostFrameCallback((_){
+                      SchedulerBinding.instance.addPostFrameCallback((_) async{
                         Navigator.push(context, MaterialPageRoute(builder: (context) => PrivateWidget(hospital: hospital, userId: userId,)));
                         deletePreviousRecord(userId);
                       });
                     }
+                  }
 
+                  if (data['Status'] == "No Ambulance"){
+                    timer.cancel();
+                    print(timeOver);
+                    print("timer canceled");
+                    SchedulerBinding.instance.addPostFrameCallback((_) async {
+                      var currentHospital = data['hospital_user_id'];
+                      noAmbulance(data: currentHospital);
+                    });
                   }
 
                   if (data['Status'] == "rejected"){
@@ -291,13 +292,23 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                       });
                     }
                     else{
-                      SchedulerBinding.instance.addPostFrameCallback((_){
+                      SchedulerBinding.instance.addPostFrameCallback((_) async {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => PrivateWidget(hospital: currentHospital, userId: userId,)));
                         deletePreviousRecord(userId);
                       });
                     }
-
                   }
+
+                  if (data['Status'] == "No Ambulance"){
+                    timer.cancel();
+                    print(timeOver);
+                    print("timer canceled");
+                    SchedulerBinding.instance.addPostFrameCallback((_) async {
+                      var currentHospital = data['hospital_user_id'];
+                      noAmbulanceLast(data: currentHospital);
+                    });
+                  }
+
                   if (data['Status'] == "rejected"){
                     timer.cancel();
                     print(timeOver);
@@ -345,13 +356,10 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
         ),
         TextButton(
           onPressed: () {
-            showDialog(context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Are you sure you want to cancel the request?",
-                    style: TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.bold,
-                    ),),
+            showCupertinoDialog<String>(
+                context: context,
+                builder: (context) => CupertinoAlertDialog(
+                  title: const Text("Are you sure you want to cancel the request?"),
                   actions: [
                     TextButton(onPressed: () {
                       timer.cancel();
@@ -381,182 +389,69 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     );
   }
 
-  Widget ambulanceWidget({required data}){
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.all(30),
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: Colors.white,
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 10.0, // soften the shadow
-            spreadRadius: 1.0, //extend the shadow
-            offset: Offset(
-              1.0, // Move to right 5  horizontally
-              1.0, // Move to bottom 5 Vertically
-            ),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 60,
-            width: 60,
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('images/red_check.png',
-                  ),
-                  fit: BoxFit.cover,)
-            ),
-          ),
-          const SizedBox(height: 18.0,),
-          Text("$data \n will accommodate you/the patient.",
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 25.0,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 30.0,),
-          const Text("An ambulance is coming for you. Please wait shortly for their arrival",
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.black54,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 50.0,),
-          RawMaterialButton(
-            fillColor: Colors.white,
-            elevation: 0.0,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-              side: const BorderSide(color: Colors.green, width: 2.0),
-            ),
-            onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-              deletePreviousRecord(userId);
-            },
-            child: const Text('CONFIRM ARRIVAL',
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 16.0,
-                letterSpacing: 1.5,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20.0,),
-          const Text("Please confirm if the ambulance has arrived. Confirming will return you to the homepage.",
-            style: TextStyle(
-                color: Colors.black54,
-                fontSize: 16.0
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
 
+  Object noAmbulance({required data}) {
+    return showCupertinoDialog<String>(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("$data has no available ambulance as of the moment"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                patients.doc(userId).update({"Status": "pending"});
+                patients.doc(userId).update({"Travel Mode": "Private Vehicle"});
+
+
+              },
+              child: const Text("Switch to private vehicle"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                generatingForHospital(hospital, userId);
+
+              },
+              child: const Text("Go to next hospital"),
+            ),
+
+          ],
+        )
+    );
   }
 
-  Widget privateWidget({required data}){
-    return Container(
-      width: double.infinity,
-      //height: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.all(30),
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: Colors.white,
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 10.0, // soften the shadow
-            spreadRadius: 1.0, //extend the shadow
-            offset: Offset(
-              1.0, // Move to right 5  horizontally
-              1.0, // Move to bottom 5 Vertically
-            ),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 60,
-            width: 60,
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('images/red_check.png',
-                  ),
-                  fit: BoxFit.cover,)
-            ),
-          ),
-          const SizedBox(height: 18.0,),
-          Text("$data \n will accommodate you/the patient.",
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 25.0,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 30.0,),
-          const Text("Thank you, we will be waiting for you arrival at the hospital.",
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.black54,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 50.0,),
-          RawMaterialButton(
-            fillColor: Colors.white,
-            elevation: 0.0,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-              side: const BorderSide(color: Colors.green, width: 2.0),
-            ),
-            onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-              deletePreviousRecord(userId);
-            },
-            child: const Text('CONFIRM ARRIVAL',
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 16.0,
-                letterSpacing: 1.5,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20.0,),
-          const Text("Please confirm if you have arrived. Confirming will return you to the homepage.",
-            style: TextStyle(
-                color: Colors.black54,
-                fontSize: 16.0
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+  Object noAmbulanceLast({required data}) {
+    return showCupertinoDialog<String>(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("$data has no ambulance available as of the moment"),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                patients.doc(userId).update({"Status": "pending"});
+                patients.doc(userId).update({"Travel Mode": "Private Vehicle"});
 
+
+              },
+              child: const Text("Switch to private vehicle"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                deletePreviousRecord(userId);
+
+              },
+              child: const Text("Cancel request"),
+            ),
+
+          ],
+        )
+    );
   }
+
+
 
 
 }

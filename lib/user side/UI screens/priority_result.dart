@@ -150,6 +150,7 @@ class _PriorityResultState extends State<PriorityResult> {
                       fontSize: 30.0,
                       fontWeight: FontWeight.w500
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 25.0,),
                   const Text("Needs Assessment and Rapid Attention",
@@ -183,7 +184,7 @@ class _PriorityResultState extends State<PriorityResult> {
                       setState(() {
                         isLoading = true;
                       });
-                      Future.delayed(const Duration(seconds: 3),(){
+                      Future.delayed(const Duration(seconds: 5),(){
                         setState(() {
                           isLoading = false;
                         });
