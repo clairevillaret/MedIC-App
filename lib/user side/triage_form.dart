@@ -214,7 +214,7 @@ class _TriageFormState extends State<TriageForm> {
                     controller: nameController,
                     decoration: const InputDecoration(
                       labelText: 'Full Name',
-                      labelStyle: TextStyle(fontSize: 12),
+                      labelStyle: TextStyle(fontSize: 14),
                     ),
                     validator: (value){
                       if(value == null || value.isEmpty){
@@ -230,7 +230,7 @@ class _TriageFormState extends State<TriageForm> {
                     controller: bdayController,
                     decoration: const InputDecoration(
                       labelText: 'Birthdate',
-                      labelStyle: TextStyle(fontSize: 12),
+                      labelStyle: TextStyle(fontSize: 14),
                       suffixIcon: Icon(Icons.calendar_month_outlined),
                     ),
                     onTap: () async {
@@ -259,7 +259,7 @@ class _TriageFormState extends State<TriageForm> {
                     controller: numberController,
                     decoration: const InputDecoration(
                       labelText: 'Contact Number',
-                      labelStyle: TextStyle(fontSize: 12),
+                      labelStyle: TextStyle(fontSize: 14),
                     ),
                     validator: (value){
                       if(value == null || value.isEmpty){
@@ -283,7 +283,7 @@ class _TriageFormState extends State<TriageForm> {
                         controller: ageController,
                         decoration: const InputDecoration(
                           labelText: 'Age',
-                          labelStyle: TextStyle(fontSize: 12),
+                          labelStyle: TextStyle(fontSize: 14),
                         ),
                         validator: (value){
                           if(value == null || value.isEmpty){
@@ -312,7 +312,7 @@ class _TriageFormState extends State<TriageForm> {
                           items: sex.map((String items) {
                             return DropdownMenuItem(
                               value: items,
-                              child: Text(items, style: const TextStyle(fontSize: 12),),
+                              child: Text(items, style: const TextStyle(fontSize: 14),),
                             );
                           }).toList(),
                           onChanged: (String? newValue) {
@@ -332,13 +332,13 @@ class _TriageFormState extends State<TriageForm> {
                     enabled: !checkBoxValue,
                     decoration: const InputDecoration(
                       labelText: 'Address',
-                      labelStyle: TextStyle(fontSize: 12),
+                      labelStyle: TextStyle(fontSize: 14),
                     ),
                   ),
                 ),
                 CheckboxListTile(
                     title: const Text("Get my device's location",
-                      style: TextStyle(fontSize: 12),),
+                      style: TextStyle(fontSize: 14),),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: checkBoxValue,
@@ -365,7 +365,7 @@ class _TriageFormState extends State<TriageForm> {
                         hintText: "Please list your main health concerns / symptoms / problems.",
                         hintStyle: TextStyle(fontSize: 12),
                         labelText: "Chief complaints",
-                      labelStyle: TextStyle(fontSize: 12),
+                      labelStyle: TextStyle(fontSize: 14),
                     ),
                     validator: (value){
                       if(value == null || value.isEmpty){
@@ -379,13 +379,13 @@ class _TriageFormState extends State<TriageForm> {
                 const Text('PLEASE SELECT TRAVEL MODE:',
                   style: TextStyle(
                     color: Color(0xFFba181b),
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.start,),
                 CheckboxListTile(
                     title: const Text("Request for Ambulance",
-                      style: TextStyle(fontSize: 12),),
+                      style: TextStyle(fontSize: 14),),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: requestAmbulance,
@@ -400,7 +400,7 @@ class _TriageFormState extends State<TriageForm> {
                 ),
                 CheckboxListTile(
                     title: const Text("Travel through private vehicle",
-                        style: TextStyle(fontSize: 12)),
+                        style: TextStyle(fontSize: 14)),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: privateVehicle,
@@ -416,7 +416,7 @@ class _TriageFormState extends State<TriageForm> {
                 const SizedBox(height: 15.0,),
                 const Text('Instruction: Please check those that are applicable',
                   style: TextStyle(
-                    fontSize: 12.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFFba181b),
                   ),
@@ -439,7 +439,7 @@ class _TriageFormState extends State<TriageForm> {
                 // category
                 CheckboxListTile(
                     title: const Text("Airway and breathing",
-                      style: TextStyle(fontSize: 12),),
+                      style: TextStyle(fontSize: 14),),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: checkAll,
@@ -466,7 +466,7 @@ class _TriageFormState extends State<TriageForm> {
                   itemBuilder: (context, index) {
                     return CheckboxListTile(
                         title: Text(airwayBreathing[index].name,
-                          style: const TextStyle(fontSize: 12),),
+                          style: const TextStyle(fontSize: 14),),
                         controlAffinity: ListTileControlAffinity.leading,
                         value: airwayBreathing[index].selected,
                         onChanged: (value) {
@@ -493,7 +493,7 @@ class _TriageFormState extends State<TriageForm> {
                 // category
                 CheckboxListTile(
                     title: const Text("Circulation",
-                      style: TextStyle(fontSize: 12),),
+                      style: TextStyle(fontSize: 14),),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: checkAll2,
@@ -519,7 +519,7 @@ class _TriageFormState extends State<TriageForm> {
                   itemBuilder: (context, index) {
                     return CheckboxListTile(
                         title: Text(circulation[index].name,
-                          style: const TextStyle(fontSize: 12),),
+                          style: const TextStyle(fontSize: 14),),
                         controlAffinity: ListTileControlAffinity.leading,
                         value: circulation[index].selected,
                         onChanged: (value) {
@@ -543,7 +543,7 @@ class _TriageFormState extends State<TriageForm> {
                 ),
                 CheckboxListTile(
                     title: const Text("Disability",
-                      style: TextStyle(fontSize: 12),),
+                      style: TextStyle(fontSize: 14),),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: checkAll3,
@@ -569,7 +569,7 @@ class _TriageFormState extends State<TriageForm> {
                   itemBuilder: (context, index) {
                     return CheckboxListTile(
                         title: Text(disability[index].name,
-                          style: const TextStyle(fontSize: 12),),
+                          style: const TextStyle(fontSize: 14),),
                         controlAffinity: ListTileControlAffinity.leading,
                         value: disability[index].selected,
                         onChanged: (value) {
@@ -593,7 +593,7 @@ class _TriageFormState extends State<TriageForm> {
                 ),
                 CheckboxListTile(
                     title: const Text("Expose and Evaluate for life threats",
-                      style: TextStyle(fontSize: 12),),
+                      style: TextStyle(fontSize: 14),),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: checkAll4,
@@ -619,7 +619,7 @@ class _TriageFormState extends State<TriageForm> {
                   itemBuilder: (context, index) {
                     return CheckboxListTile(
                         title: Text(lifeThreats[index].name,
-                          style: const TextStyle(fontSize: 12),),
+                          style: const TextStyle(fontSize: 14),),
                         controlAffinity: ListTileControlAffinity.leading,
                         value: lifeThreats[index].selected,
                         onChanged: (value) {
@@ -657,7 +657,7 @@ class _TriageFormState extends State<TriageForm> {
                 ),
                 CheckboxListTile(
                     title: const Text("Bleeding",
-                      style: TextStyle(fontSize: 12),),
+                      style: TextStyle(fontSize: 14),),
                     contentPadding: const EdgeInsets.all(0.0),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: checkAll5,
@@ -684,7 +684,7 @@ class _TriageFormState extends State<TriageForm> {
                   itemBuilder: (context, index) {
                     return CheckboxListTile(
                         title: Text(bleeding[index].name,
-                          style: const TextStyle(fontSize: 12),),
+                          style: const TextStyle(fontSize: 14),),
                         controlAffinity: ListTileControlAffinity.leading,
                         value: bleeding[index].selected,
                         onChanged: (value) {
@@ -713,7 +713,7 @@ class _TriageFormState extends State<TriageForm> {
                   itemBuilder: (context, index) {
                     return CheckboxListTile(
                         title: Text(prioritySigns[index].name,
-                          style: const TextStyle(fontSize: 12),),
+                          style: const TextStyle(fontSize: 14),),
                         contentPadding: const EdgeInsets.all(0.0),
                         controlAffinity: ListTileControlAffinity.leading,
                         value: prioritySigns[index].selected,
@@ -826,7 +826,7 @@ class _TriageFormState extends State<TriageForm> {
                         : const Text('Submit',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 12.0,
+                        fontSize: 14.0,
                         letterSpacing: 1.5,
                         fontWeight: FontWeight.bold,
                       ),

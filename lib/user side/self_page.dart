@@ -229,13 +229,13 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                     children: [
                                       const Text("Name:",
                                         style: TextStyle(
-                                          fontSize: 12.0,
+                                          fontSize: 14.0,
                                         ),),
                                       Expanded(
                                         child: ListTile(
                                           title: Text(userName,
                                             style: const TextStyle(
-                                              fontSize: 12.0,
+                                              fontSize: 14.0,
                                               fontWeight: FontWeight.bold,
                                             ),),
                                         ),
@@ -246,13 +246,13 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                     children: [
                                       const Text("Birthdate:",
                                           style: TextStyle(
-                                            fontSize: 12.0,
+                                            fontSize: 14.0,
                                           )),
                                       Expanded(
                                         child: ListTile(
                                           title: Text(userBirthday,
                                               style: const TextStyle(
-                                                fontSize: 12.0,
+                                                fontSize: 14.0,
                                                 fontWeight: FontWeight.bold,
                                               )),
                                         ),
@@ -263,13 +263,13 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                     children: [
                                       const Text("Contact No:",
                                           style: TextStyle(
-                                            fontSize: 12.0,
+                                            fontSize: 14.0,
                                           )),
                                       Expanded(
                                         child: ListTile(
                                           title: Text(userNumber,
                                               style: const TextStyle(
-                                                fontSize: 12.0,
+                                                fontSize: 14.0,
                                                 fontWeight: FontWeight.bold,
                                               )),
                                         ),
@@ -292,7 +292,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                           controller: ageController,
                           decoration: const InputDecoration(
                             labelText: 'Age',
-                            labelStyle: TextStyle(fontSize: 12),
+                            labelStyle: TextStyle(fontSize: 14),
                           ),
                           validator: (value){
                             if(value == null || value.isEmpty){
@@ -322,7 +322,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             items: sex.map((String items) {
                               return DropdownMenuItem(
                                 value: items,
-                                child: Text(items, style: const TextStyle(fontSize: 12)),
+                                child: Text(items, style: const TextStyle(fontSize: 14)),
                               );
                             }).toList(),
                             onChanged: (String? newValue) {
@@ -336,10 +336,10 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     ],
                   ),
                   const SizedBox(height: 20.0,),
-                  const Text("Address:", style: TextStyle(fontSize: 12),),
+                  const Text("Address:", style: TextStyle(fontSize: 14),),
                   CheckboxListTile(
                       title: const Text("Get my device's location",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: checkBoxValue,
@@ -364,7 +364,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                         hintText: "Please list your main health concerns / symptoms / problems.",
                         hintStyle: TextStyle(fontSize: 12),
                         labelText: "Chief complaints",
-                        labelStyle: TextStyle(fontSize: 12),
+                        labelStyle: TextStyle(fontSize: 14),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -377,14 +377,14 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   const SizedBox(height: 15.0,),
                   const Text('PLEASE SELECT TRAVEL MODE:',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Color(0xFFba181b),
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.start,),
                   CheckboxListTile(
                       title: const Text("Request for Ambulance",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: requestAmbulance,
@@ -399,7 +399,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   ),
                   CheckboxListTile(
                       title: const Text("Travel through private vehicle",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: privateVehicle,
@@ -439,7 +439,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
 
                   CheckboxListTile(
                       title: const Text("Airway and breathing",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: checkAll,
@@ -465,7 +465,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     itemBuilder: (context, index) {
                       return CheckboxListTile(
                           title: Text(airwayBreathing[index].name,
-                              style: const TextStyle(fontSize: 12)),
+                              style: const TextStyle(fontSize: 14)),
                           controlAffinity: ListTileControlAffinity.leading,
                           value: airwayBreathing[index].selected,
                           onChanged: (value) {
@@ -490,7 +490,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   // category
                   CheckboxListTile(
                       title: const Text("Circulation",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: checkAll2,
@@ -516,7 +516,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     itemBuilder: (context, index) {
                       return CheckboxListTile(
                           title: Text(circulation[index].name,
-                              style: const TextStyle(fontSize: 12)),
+                              style: const TextStyle(fontSize: 14)),
                           controlAffinity: ListTileControlAffinity.leading,
                           value: circulation[index].selected,
                           onChanged: (value) {
@@ -540,7 +540,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   ),
                   CheckboxListTile(
                       title: const Text("Disability",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: checkAll3,
@@ -566,7 +566,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     itemBuilder: (context, index) {
                       return CheckboxListTile(
                           title: Text(disability[index].name,
-                              style: const TextStyle(fontSize: 12)),
+                              style: const TextStyle(fontSize: 14)),
                           controlAffinity: ListTileControlAffinity.leading,
                           value: disability[index].selected,
                           onChanged: (value) {
@@ -590,7 +590,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   ),
                   CheckboxListTile(
                       title: const Text("Expose and Evaluate for life threats",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: checkAll4,
@@ -616,7 +616,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     itemBuilder: (context, index) {
                       return CheckboxListTile(
                           title: Text(lifeThreats[index].name,
-                              style: const TextStyle(fontSize: 12)),
+                              style: const TextStyle(fontSize: 14)),
                           controlAffinity: ListTileControlAffinity.leading,
                           value: lifeThreats[index].selected,
                           onChanged: (value) {
@@ -655,7 +655,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                   ),
                   CheckboxListTile(
                       title: const Text("Bleeding",
-                          style: TextStyle(fontSize: 12)),
+                          style: TextStyle(fontSize: 14)),
                       contentPadding: const EdgeInsets.all(0.0),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: checkAll5,
@@ -681,7 +681,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     itemBuilder: (context, index) {
                       return CheckboxListTile(
                           title: Text(bleeding[index].name,
-                              style: const TextStyle(fontSize: 12)),
+                              style: const TextStyle(fontSize: 14)),
                           controlAffinity: ListTileControlAffinity.leading,
                           value: bleeding[index].selected,
                           onChanged: (value) {
@@ -711,7 +711,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                     itemBuilder: (context, index) {
                       return CheckboxListTile(
                           title: Text(prioritySigns[index].name,
-                              style: const TextStyle(fontSize: 12)),
+                              style: const TextStyle(fontSize: 14)),
                           contentPadding: const EdgeInsets.all(0.0),
                           controlAffinity: ListTileControlAffinity.leading,
                           value: prioritySigns[index].selected,
@@ -818,7 +818,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                           : const Text('Submit',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.0,
+                          fontSize: 14.0,
                           letterSpacing: 1.5,
                           fontWeight: FontWeight.bold,
                         ),

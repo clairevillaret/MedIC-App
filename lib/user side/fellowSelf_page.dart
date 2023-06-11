@@ -65,7 +65,7 @@ class _FellowSelfState extends State<FellowSelf>{
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             color: Colors.black54,
-                            fontSize: 12.0,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.w500,
                           ))
                         ],
@@ -88,7 +88,7 @@ class _FellowSelfState extends State<FellowSelf>{
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                 color: Colors.black54,
-                                fontSize: 12.0,
+                                fontSize: 14.0,
                                 fontWeight: FontWeight.w500,
                               ))
                         ],

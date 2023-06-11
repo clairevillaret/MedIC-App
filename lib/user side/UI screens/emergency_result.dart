@@ -163,7 +163,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                   const SizedBox(height: 30.0,),
                   const Text("Please choose the hospital that will accommodate you / the patient",
                     style: TextStyle(
-                      fontSize: 12.0,
+                      fontSize: 14.0,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -291,7 +291,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     child: const Text('CANCEL',
                       style: TextStyle(
                         color: Color(0xFFba181b),
-                        fontSize: 12.0,
+                        fontSize: 14.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

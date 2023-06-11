@@ -91,7 +91,7 @@ class _PrivateWidgetState extends State<PrivateWidget> {
               Text("$hospital \n will accommodate you/the patient.",
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 15.0,
+                  fontSize: 16.0,
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -99,7 +99,7 @@ class _PrivateWidgetState extends State<PrivateWidget> {
               const SizedBox(height: 50.0,),
               const Text("Thank you, we will be waiting for your arrival at the hospital.",
                 style: TextStyle(
-                  fontSize: 15.0,
+                  fontSize: 14.0,
                   color: Colors.black54,
                   fontWeight: FontWeight.w500,
                 ),
@@ -109,7 +109,7 @@ class _PrivateWidgetState extends State<PrivateWidget> {
               const Text("Please confirm if you have arrived at the hospital",
                 style: TextStyle(
                     color: Colors.black54,
-                    fontSize: 10.0
+                    fontSize: 12.0
                 ),
                 textAlign: TextAlign.center,
               ),

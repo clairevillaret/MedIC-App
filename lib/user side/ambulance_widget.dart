@@ -90,7 +90,7 @@ class _AmbulanceWidgetState extends State<AmbulanceWidget> {
                     Text("$hospital \n will accommodate you/the patient.",
                       style: const TextStyle(
                         color: Colors.black,
-                        fontSize: 15.0,
+                        fontSize: 16.0,
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
@@ -118,7 +118,7 @@ class _AmbulanceWidgetState extends State<AmbulanceWidget> {
                     const SizedBox(height: 20.0,),
                     Text("Estimated to arrive in: ${data!['time remaining']}",
                       style: const TextStyle(
-                        fontSize: 12.0,
+                        fontSize: 14.0,
                         color: Color(0xFFba181b),
                         fontWeight: FontWeight.w500,
                       ),
@@ -128,7 +128,7 @@ class _AmbulanceWidgetState extends State<AmbulanceWidget> {
                     const Text("Please confirm if the ambulance has arrived.",
                       style: TextStyle(
                           color: Colors.black54,
-                          fontSize: 10.0
+                          fontSize: 12.0
                       ),
                       textAlign: TextAlign.center,
                     ),
