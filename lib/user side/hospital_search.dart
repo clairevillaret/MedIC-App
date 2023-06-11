@@ -41,7 +41,6 @@ class _HospitalSearchState extends State<HospitalSearch> {
           'Hospitals',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20.0,
           ),
         ),
         bottom: PreferredSize(
@@ -51,7 +50,7 @@ class _HospitalSearchState extends State<HospitalSearch> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Container(
-                  height: 40.0,
+                  // height: 40.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     color: Colors.white,
@@ -65,7 +64,7 @@ class _HospitalSearchState extends State<HospitalSearch> {
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
                       hintText: "search hospital",
-                      hintStyle: TextStyle(fontSize: 15),
+                      hintStyle: TextStyle(fontSize: 12),
                     ),
                   ),
                 ),
@@ -111,87 +110,76 @@ class _HospitalSearchState extends State<HospitalSearch> {
     return Container(
       margin: const EdgeInsets.fromLTRB(5, 2, 5, 2),
       padding: const EdgeInsets.all(10),
-      height: 160.0,
+      //height: 160.0,
+      // height: MediaQuery.of(context).size.height,
       child: Column(
         children: [
-          Expanded(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 50.0,
-                    backgroundColor: Colors.white,
-                    backgroundImage: const AssetImage('images/placeholder.png'), // Placeholder
-                    foregroundImage: NetworkImage(documentSnapshot['Pic_url']), // Profile
-                  ),
-                  const SizedBox(width: 8.0),
-                  Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        //mainAxisSize: MainAxisSize.min,
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 50.0,
+                backgroundColor: Colors.white,
+                backgroundImage: const AssetImage('images/placeholder.png'), // Placeholder
+                foregroundImage: NetworkImage(documentSnapshot['Pic_url']), // Profile
+              ),
+              const SizedBox(width: 8.0),
+              Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        documentSnapshot['Name'],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 3.0),
+                      Row(
                         children: [
-                          Expanded(
+                          const Icon(Icons.call, size: 20.0,color: Colors.red,),
+                          Text(
+                            documentSnapshot['Contact_num'].toString())
+                        ],
+                      ),
+                      const SizedBox(height: 3.0),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.location_on, size: 20.0, color: Colors.red,),
+                          Flexible(
                             child: Text(
-                              documentSnapshot['Name'],
-                              style: const TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              documentSnapshot['Address'].toString(),
+                              overflow: TextOverflow.visible,
+                              style: const TextStyle(height: 1.3),
                             ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                const Icon(Icons.call, size: 20.0,color: Colors.red,),
-                                Text(
-                                  documentSnapshot['Contact_num'].toString(),
-                                  style: const TextStyle(fontSize: 16.0),)
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(Icons.location_on, size: 20.0, color: Colors.red,),
-                                Flexible(
-                                  child: Text(
-                                    documentSnapshot['Address'].toString(),
-                                    style: const TextStyle(fontSize: 16.0),
-                                    overflow: TextOverflow.visible,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              RawMaterialButton(
-                                constraints: const BoxConstraints(),
-                                onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAvailability(documentSnapshot: documentSnapshot,)));
-                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => const ListHospital()));
-                                },
-                                child: const Text('Check Availability',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Color(0xFFba181b),
-                                  ),
-                                ),
-                              ),
-                              const Icon(Icons.arrow_forward_ios, size: 20.0,color: Colors.red,),
-                            ],
                           ),
                         ],
-                      )
+                      ),
+                      Row(
+                        children: [
+                          RawMaterialButton(
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAvailability(documentSnapshot: documentSnapshot,)));
+                              //Navigator.push(context, MaterialPageRoute(builder: (context) => const ListHospital()));
+                            },
+                            child: const Text('Check Availability',
+                              style: TextStyle(
+                                color: Color(0xFFba181b),
+                              ),
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios, size: 20.0,color: Colors.red,),
+                        ],
+                      ),
+                    ],
                   )
+              )
 
 
-                ],
-              ),
-            ),
+            ],
           ),
         ],
       ),

@@ -85,7 +85,6 @@ class _HospitalSelectState extends State<HospitalSelect> {
           'Hospitals',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20.0,
           ),
         ),
         bottom: PreferredSize(
@@ -95,7 +94,6 @@ class _HospitalSelectState extends State<HospitalSelect> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Container(
-                  height: 40.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     color: Colors.white,
@@ -109,7 +107,7 @@ class _HospitalSelectState extends State<HospitalSelect> {
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
                       hintText: "search hospital",
-                      hintStyle: TextStyle(fontSize: 15),
+                      hintStyle: TextStyle(fontSize: 12),
                     ),
                   ),
                 ),
@@ -158,124 +156,108 @@ class _HospitalSelectState extends State<HospitalSelect> {
     return Container(
       margin: const EdgeInsets.fromLTRB(5, 2, 5, 2),
       padding: const EdgeInsets.all(10),
-      height: 160.0,
+
       child: Column(
         children: [
-          Expanded(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: RawMaterialButton(
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 50.0,
-                      backgroundColor: Colors.transparent,
-                      backgroundImage: const AssetImage('images/placeholder.png'),
-                      foregroundImage: NetworkImage(documentSnapshot['Pic_url']),
-
-                    ),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          //mainAxisSize: MainAxisSize.min,
+          RawMaterialButton(
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 50.0,
+                  backgroundColor: Colors.white,
+                  backgroundImage: const AssetImage('images/placeholder.png'), // Placeholder
+                  foregroundImage: NetworkImage(documentSnapshot['Pic_url']), // Profile
+                ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          documentSnapshot['Name'],
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 3.0),
+                        Row(
                           children: [
-                            Expanded(
+                            const Icon(Icons.call, size: 20.0,color: Colors.red,),
+                            Text(
+                                documentSnapshot['Contact_num'].toString())
+                          ],
+                        ),
+                        const SizedBox(height: 3.0),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.location_on, size: 20.0, color: Colors.red,),
+                            Flexible(
                               child: Text(
-                                documentSnapshot['Name'],
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                documentSnapshot['Address'].toString(),
+                                overflow: TextOverflow.visible,
+                                style: const TextStyle(height: 1.3),
                               ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.call, size: 20.0,color: Colors.red,),
-                                  Text(
-                                    documentSnapshot['Contact_num'].toString(),
-                                    style: const TextStyle(fontSize: 16.0),)
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Icon(Icons.location_on, size: 20.0, color: Colors.red,),
-                                  Flexible(
-                                    child: Text(
-                                      documentSnapshot['Address'].toString(),
-                                      style: const TextStyle(fontSize: 16.0),
-                                      overflow: TextOverflow.visible,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                RawMaterialButton(
-                                  constraints: const BoxConstraints(),
-                                  onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAvailability(documentSnapshot: documentSnapshot,)));
-                                    //Navigator.push(context, MaterialPageRoute(builder: (context) => const ListHospital()));
-                                  },
-                                  child: const Text('Check Availability',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Color(0xFFba181b),
-                                    ),
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_forward_ios, size: 20.0,color: Colors.red,),
-                              ],
                             ),
                           ],
-                        )
-                    )
-                  ],
-                ),
-                onPressed: () {
-                  showCupertinoDialog<String>(
-                    context: context,
-                    builder: (context) => CupertinoAlertDialog(
-                      title: const Text("Select this hospital",
-                        style: TextStyle(
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.bold,
-                        ),),
-                      actions: [
-                        TextButton(
-                          onPressed: () async {
-                            selectedHospital = documentSnapshot['Name'];
-
-                            print(selectedHospital);
-                            userID = await createDocument(selectedHospital);
-
-                            if (!mounted) return;
-                            Navigator.of(context).pop();
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ManualDisplayHospital(currentHospital:selectedHospital, userID: userID,)));
-                          },
-                          child: const Text("Yes",
-                            style: TextStyle(fontSize: 25.0),),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("No",
-                            style: TextStyle(fontSize: 25.0),),
+                        Row(
+                          children: [
+                            RawMaterialButton(
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAvailability(documentSnapshot: documentSnapshot,)));
+                              },
+                              child: const Text('Check Availability',
+                                style: TextStyle(
+                                  color: Color(0xFFba181b),
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios, size: 20.0,color: Colors.red,),
+                          ],
                         ),
                       ],
-                    ),
-                  );
+                    )
+                )
 
-                },
-              ),
+              ],
             ),
+            onPressed: () {
+              showCupertinoDialog<String>(
+                context: context,
+                builder: (context) => CupertinoAlertDialog(
+                  title: const Text("Select this hospital?",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),),
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        selectedHospital = documentSnapshot['Name'];
+
+                        print(selectedHospital);
+                        userID = await createDocument(selectedHospital);
+
+                        if (!mounted) return;
+                        Navigator.of(context).pop();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ManualDisplayHospital(currentHospital:selectedHospital, userID: userID,)));
+                      },
+                      child: const Text("Yes"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("No"),
+                    ),
+                  ],
+                ),
+              );
+
+            },
           ),
         ],
       ),

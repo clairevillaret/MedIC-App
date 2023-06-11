@@ -133,7 +133,8 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(20.0),
-                          child: Text("$selectedHospital is taking too long to respond. Please select a new hospital."),
+                          child: Text("$selectedHospital is taking too long to respond. Please select a new hospital.",
+                          textAlign: TextAlign.center,),
                         ),
                         TextButton(
                             onPressed: () {
@@ -220,7 +221,7 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
       children: [
         Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Text("We are currently contacting $data, please wait for a moment..."),
+          child: Text("We are currently contacting $data, \nplease wait for a moment..."),
         ),
         TextButton(
           onPressed: () {

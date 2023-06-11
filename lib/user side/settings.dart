@@ -49,14 +49,14 @@ class _SettingsPageState extends State<SettingsPage>{
                   const Text("User Information",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 25.0,
+                      fontSize: 20.0,
                     ),
                   ),
                   const Divider(
                     color: Colors.black12,
                     thickness: 2.0,
                   ),
-                  Text("Logged in as ${user.email!}"),
+                  Text("Logged in as ${user.email!}",textAlign: TextAlign.center,),
                   const SizedBox(height: 10.0,),
                   FutureBuilder(
                       future: users.where('Email', isEqualTo: user.email).get(),
@@ -79,65 +79,55 @@ class _SettingsPageState extends State<SettingsPage>{
                                     const Text("Name:",
                                       style: TextStyle(
                                         color: Colors.black54,
-                                        fontSize: 18.0,
                                       ),
                                     ),
                                     ListTile(
                                       title: Text(snapshot.data?.docs[0].get('Full Name'),
                                         style: const TextStyle(
-                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),),
                                     ),
                                     const Text("Birthdate:",
                                       style: TextStyle(
                                         color: Colors.black54,
-                                        fontSize: 18.0,
                                       ),
                                     ),
                                     ListTile(
                                       title: Text(snapshot.data?.docs[0].get('Birthdate'),
                                           style: const TextStyle(
-                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           )),
                                     ),
                                     const Text("Contact Number:",
                                       style: TextStyle(
                                         color: Colors.black54,
-                                        fontSize: 18.0,
                                       ),
                                     ),
                                     ListTile(
                                       title: Text(snapshot.data?.docs[0].get('Contact Number'),
                                           style: const TextStyle(
-                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           )),
                                     ),
                                     const Text("Email:",
                                       style: TextStyle(
                                         color: Colors.black54,
-                                        fontSize: 18.0,
                                       ),
                                     ),
                                     ListTile(
                                       title: Text(snapshot.data?.docs[0].get('Email'),
                                           style: const TextStyle(
-                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           )),
                                     ),
                                     const Text("Address:",
                                       style: TextStyle(
                                         color: Colors.black54,
-                                        fontSize: 18.0,
                                       ),
                                     ),
                                     ListTile(
                                       title: Text(snapshot.data?.docs[0].get('Address'),
                                           style: const TextStyle(
-                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           )),
                                     ),
@@ -154,7 +144,7 @@ class _SettingsPageState extends State<SettingsPage>{
                   RawMaterialButton(
                     fillColor: const Color(0xFFba181b),
                     elevation: 0.0,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.all(15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
                       side: const BorderSide(color: Color(0xFFba181b)),
@@ -167,7 +157,6 @@ class _SettingsPageState extends State<SettingsPage>{
                     child: const Text('Logout',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 15.0,
                         letterSpacing: 1.5,
                         fontWeight: FontWeight.bold,
                       ),

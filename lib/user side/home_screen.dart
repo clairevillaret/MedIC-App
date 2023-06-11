@@ -119,14 +119,12 @@ class _HomeScreenState extends State<HomeScreen>{
                             Flexible(
                               child: Text('press this button ',
                                 style: TextStyle(
-                                  fontSize: 16.0,
                                   color: Color(0xFFba181b),
                                 ),),
                             ),
                             Icon(Icons.arrow_downward,color: Color(0xFFba181b), size: 20.0,),
                             Text(' for emergency',
                               style: TextStyle(
-                                fontSize: 16.0,
                                 color: Color(0xFFba181b),
                               ),),
                           ],

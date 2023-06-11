@@ -95,18 +95,17 @@ class _EmergencyResultState extends State<EmergencyResult> {
               ),
               title: const Text("MedIC",
                 style: TextStyle(
-                  fontSize: 20.0,
                   letterSpacing: 2.0,
                 ),
               )
           ),
           backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
+          body: SafeArea(
             child: Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
               margin: const EdgeInsets.all(30),
-              padding: const EdgeInsets.all(30),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
                 color: Colors.white,
@@ -129,22 +128,22 @@ class _EmergencyResultState extends State<EmergencyResult> {
                   const Text("RESULT",
                     style: TextStyle(
                       color: Color(0xFFba181b),
-                      fontSize: 28.0,
                       fontWeight: FontWeight.w600,
-                      letterSpacing: 3.0,
+                      fontSize: 16.0,
+                      letterSpacing: 1.0,
                     ),
                   ),
                   const Text("Triage Category:",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 25.0,
+                      fontSize: 16.0,
                     ),
                   ),
                   const SizedBox(height: 60.0,),
                   const Text("EMERGENCY CASE",
                     style: TextStyle(
                         color: Color(0xFFba181b),
-                        fontSize: 30.0,
+                        fontSize: 22.0,
                         fontWeight: FontWeight.w500
                     ),
                     textAlign: TextAlign.center,
@@ -152,7 +151,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                   const SizedBox(height: 25.0,),
                   const Text("Needs Immediate Treatment",
                     style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 18.0,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -164,15 +163,15 @@ class _EmergencyResultState extends State<EmergencyResult> {
                   const SizedBox(height: 30.0,),
                   const Text("Please choose the hospital that will accommodate you / the patient",
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 12.0,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 45.0,),
+                  const SizedBox(height: 40.0,),
                   RawMaterialButton(
                       fillColor: Colors.white,
                       elevation: 0.0,
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         side: const BorderSide(color: Color(0xFFba181b), width: 1.5),
@@ -241,7 +240,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                             Text("NEAREST",
                             style: TextStyle(
                               color: Color(0xFFba181b),
-                              fontSize: 18.0,
+                              fontSize: 14.0,
                               letterSpacing: 1.5,
                               fontWeight: FontWeight.bold,
                             ),
@@ -249,7 +248,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                             Text(" HOSPITAL",
                               style: TextStyle(
                                 color: Color(0xFFba181b),
-                                fontSize: 18.0,
+                                fontSize: 14.0,
                                 letterSpacing: 1.5,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -277,7 +276,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     child: const Text('SELECT HOSPITAL',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16.0,
+                        fontSize: 14.0,
                         letterSpacing: 1.5,
                         fontWeight: FontWeight.bold,
                       ),
@@ -292,7 +291,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                     child: const Text('CANCEL',
                       style: TextStyle(
                         color: Color(0xFFba181b),
-                        fontSize: 15.0,
+                        fontSize: 12.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

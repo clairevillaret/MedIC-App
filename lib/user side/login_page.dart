@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       vertical: 30.0, horizontal: 0.0),
                   child: const Text("MedIC",
                     style: TextStyle(
-                      fontSize: 70.0,
+                      fontSize: 50.0,
                       color: Color(0xFFba181b),
                       fontWeight: FontWeight.w500,
                       letterSpacing: 10.0,
@@ -99,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Email',
+                        labelStyle: const TextStyle(fontSize: 12),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -119,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Password',
+                        labelStyle: const TextStyle(fontSize: 12),
                         suffixIcon: GestureDetector(
                             onTap: () {
                               _togglePassword();
@@ -174,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: const Text('LOGIN',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18.0,
+                            fontSize: 12.0,
                             letterSpacing: 1.5,
                             fontWeight: FontWeight.bold,
                           ),),
@@ -186,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                         const Text(
                           "Don't have an account yet?",
                           style: TextStyle(
-                            fontSize: 18.0,
+                            fontSize: 12.0,
                             color: Colors.black,
                           ),),
                         RawMaterialButton(
@@ -197,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: const Text(' Sign Up',
                             style: TextStyle(
                               color: Color(0xFFba181b),
-                              fontSize: 18.0,
+                              fontSize: 12.0,
                             ),
                           ),
                         ),
