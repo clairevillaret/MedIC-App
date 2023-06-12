@@ -100,7 +100,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
               )
           ),
           backgroundColor: Colors.transparent,
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
@@ -139,7 +139,7 @@ class _EmergencyResultState extends State<EmergencyResult> {
                       fontSize: 16.0,
                     ),
                   ),
-                  const SizedBox(height: 60.0,),
+                  const SizedBox(height: 50.0,),
                   const Text("EMERGENCY CASE",
                     style: TextStyle(
                         color: Color(0xFFba181b),

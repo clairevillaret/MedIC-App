@@ -104,7 +104,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
               )
           ),
           backgroundColor: Colors.transparent,
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
@@ -143,7 +143,7 @@ class _NonUrgentResultState extends State<NonUrgentResult> {
                       fontSize: 16.0,
                     ),
                   ),
-                  const SizedBox(height: 60.0,),
+                  const SizedBox(height: 50.0,),
                   const Text("NON-URGENT CASE",
                     style: TextStyle(
                         color: Colors.green,

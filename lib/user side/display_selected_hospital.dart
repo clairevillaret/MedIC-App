@@ -229,8 +229,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                     print(timeOver);
                     print("timer canceled");
                     SchedulerBinding.instance.addPostFrameCallback((_) async {
-                      var currentHospital = data['hospital_user_id'];
-                      noAmbulance(data: currentHospital);
+                      noAmbulance();
                     });
                   }
 
@@ -304,8 +303,7 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
                     print(timeOver);
                     print("timer canceled");
                     SchedulerBinding.instance.addPostFrameCallback((_) async {
-                      var currentHospital = data['hospital_user_id'];
-                      noAmbulanceLast(data: currentHospital);
+                      noAmbulanceLast();
                     });
                   }
 
@@ -390,11 +388,11 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
   }
 
 
-  Object noAmbulance({required data}) {
+  Object noAmbulance() {
     return showCupertinoDialog<String>(
         context: context,
         builder: (context) => CupertinoAlertDialog(
-          title: Text("$data has no available ambulance as of the moment"),
+          title: const Text("There is no available ambulance as of the moment"),
           actions: <Widget>[
             TextButton(
               onPressed: () async {
@@ -420,11 +418,11 @@ class _DisplaySelectedHospitalState extends State<DisplaySelectedHospital> {
     );
   }
 
-  Object noAmbulanceLast({required data}) {
+  Object noAmbulanceLast() {
     return showCupertinoDialog<String>(
         context: context,
         builder: (context) => CupertinoAlertDialog(
-          title: Text("$data has no ambulance available as of the moment"),
+          title: const Text("There is no available ambulance as of the moment"),
           actions: [
             TextButton(
               onPressed: () async {

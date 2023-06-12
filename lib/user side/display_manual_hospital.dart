@@ -177,8 +177,7 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
                   print(timeOver);
                   print("timer canceled");
                   SchedulerBinding.instance.addPostFrameCallback((_) async {
-                    var currentHospital = data['hospital_user_id'];
-                    noAmbulance(data: currentHospital);
+                    noAmbulance();
                   });
                 }
 
@@ -221,7 +220,7 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
       children: [
         Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Text("We are currently contacting $data, \nplease wait for a moment..."),
+          child: Text("We are currently contacting $data, please wait for a moment..."),
         ),
         TextButton(
           onPressed: () {
@@ -258,11 +257,11 @@ class _ManualDisplayHospitalState extends State<ManualDisplayHospital> {
     );
   }
 
-  Object noAmbulance({required data}) {
+  Object noAmbulance() {
     return showCupertinoDialog<String>(
         context: context,
         builder: (context) => CupertinoAlertDialog(
-          title: Text("$data has no available ambulance as of the moment"),
+          title: const Text("There is no available ambulance as of the moment"),
           actions: <Widget>[
             TextButton(
               onPressed: () async {

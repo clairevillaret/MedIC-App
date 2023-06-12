@@ -103,7 +103,7 @@ class _PriorityResultState extends State<PriorityResult> {
               )
           ),
           backgroundColor: Colors.transparent,
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
@@ -142,7 +142,7 @@ class _PriorityResultState extends State<PriorityResult> {
                       fontSize: 16.0,
                     ),
                   ),
-                  const SizedBox(height: 60.0,),
+                  const SizedBox(height: 50.0,),
                   const Text("PRIORITY CASE",
                     style: TextStyle(
                       color: Colors.orange,
