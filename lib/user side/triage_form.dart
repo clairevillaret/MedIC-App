@@ -284,6 +284,7 @@ class _TriageFormState extends State<TriageForm> {
                         decoration: const InputDecoration(
                           labelText: 'Age',
                           labelStyle: TextStyle(fontSize: 14),
+                          contentPadding: EdgeInsets.all(0.0),
                         ),
                         validator: (value){
                           if(value == null || value.isEmpty){
@@ -304,23 +305,23 @@ class _TriageFormState extends State<TriageForm> {
                     ),
                     const SizedBox(width: 15.0,),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 23.0),
-                        child: DropdownButtonFormField<String>(
-                          value: selectedSex,
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          items: sex.map((String items) {
-                            return DropdownMenuItem(
-                              value: items,
-                              child: Text(items, style: const TextStyle(fontSize: 14),),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedSex = newValue!;
-                            });
-                          },
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(0.0)
                         ),
+                        value: selectedSex,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: sex.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(items, style: const TextStyle(fontSize: 14),),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedSex = newValue!;
+                          });
+                        },
                       ),
                     ),
                   ],

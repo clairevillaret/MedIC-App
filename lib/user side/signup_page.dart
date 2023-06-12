@@ -45,28 +45,36 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future signUp() async {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim());
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
 
-    addUserDetails(
-      nameController.text.trim(),
-      birthdateController.text.trim(),
-      emailController.text.trim(),
-      numberController.text.trim(),
-      addressController.text.trim(),
-      passwordController.text.trim(),
-      selectedRole,
-    );
+      addUserDetails(
+        nameController.text.trim(),
+        birthdateController.text.trim(),
+        emailController.text.trim(),
+        numberController.text.trim(),
+        addressController.text.trim(),
+        passwordController.text.trim(),
+        selectedRole,
+      );
 
-    if (currentUser != null) {
-      // signed in
       if (!mounted) return;
       Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-    } else {
-      if (!mounted) return;
-      Navigator.pop(context);
 
+      // if (currentUser != null) {
+      //   // signed in
+      //   if (!mounted) return;
+      //   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+      // }
+
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        return Fluttertoast.showToast(msg: 'enter a valid email address');
+      } else if (e.code == 'email-already-in-use') {
+        Fluttertoast.showToast(msg: 'email address is already in use');
+      }
     }
 
   }
@@ -92,6 +100,7 @@ class _SignupPageState extends State<SignupPage> {
       return false;
     }
   }
+
 
   @override
   void dispose(){
@@ -275,8 +284,8 @@ class _SignupPageState extends State<SignupPage> {
                         if (value == null || value.isEmpty) {
                           return "* Required";
                         }
-                        if (value.trim().length < 8) {
-                          return 'Password must be at least 8 characters';
+                        if (value.trim().length < 7) {
+                          return 'Password must be at least 7 characters';
                         }
                         return null;
                       }
@@ -350,7 +359,8 @@ class _SignupPageState extends State<SignupPage> {
                           if (passwordConfirmed()){
                             signUp();
                           }
-
+                        }else{
+                          Fluttertoast.showToast(msg: 'Please check if there are unanswered fields');
                         }
                       },
                       child: const Text('Sign Up',
