@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/login_page.dart';
@@ -44,21 +45,19 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future signUp() async {
-    if(passwordConfirmed()){
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim());
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim());
 
-      addUserDetails(
-          nameController.text.trim(),
-          birthdateController.text.trim(),
-          emailController.text.trim(),
-          numberController.text.trim(),
-          addressController.text.trim(),
-        passwordController.text.trim(),
-        selectedRole,
-      );
-    }
+    addUserDetails(
+      nameController.text.trim(),
+      birthdateController.text.trim(),
+      emailController.text.trim(),
+      numberController.text.trim(),
+      addressController.text.trim(),
+      passwordController.text.trim(),
+      selectedRole,
+    );
 
     if (currentUser != null) {
       // signed in
@@ -89,6 +88,7 @@ class _SignupPageState extends State<SignupPage> {
     if(passwordController.text.trim() == confirmController.text.trim()){
       return true;
     }else{
+      Fluttertoast.showToast(msg: 'Passwords do not match');
       return false;
     }
   }
@@ -120,7 +120,7 @@ class _SignupPageState extends State<SignupPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: const EdgeInsets.fromLTRB(0.0, 60.0, 0.0, 50.0),
+                    margin: const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 40.0),
                     child: const Text(
                       'Hi! Sign up below with your details.',
                       textAlign: TextAlign.center,
@@ -141,7 +141,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Full Name',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14.0),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -161,7 +161,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Birthdate',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14.0),
                         suffixIcon: const Icon(Icons.calendar_month_outlined),
                       ),
                       onTap: () async {
@@ -194,7 +194,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Email',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14.0),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -214,7 +214,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Contact Number',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14.0),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -240,7 +240,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Address',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14.0),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -261,7 +261,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Password',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14.0),
                         suffixIcon: GestureDetector(
                             onTap: () {
                               _togglePassword();
@@ -293,7 +293,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Confirm Password',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14.0),
                         suffixIcon: GestureDetector(
                             onTap: () {
                               _togglePassword();
@@ -324,7 +324,7 @@ class _SignupPageState extends State<SignupPage> {
                       items: roles.map((String items) {
                         return DropdownMenuItem(
                           value: items,
-                          child: Text(items, style: const TextStyle(fontSize: 12)),
+                          child: Text(items, style: const TextStyle(fontSize: 14.0)),
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
@@ -347,13 +347,16 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()){
-                        signUp();
+                          if (passwordConfirmed()){
+                            signUp();
+                          }
+
                         }
                       },
                       child: const Text('Sign Up',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.0,
+                          fontSize: 14.0,
                           letterSpacing: 1.5,
                           fontWeight: FontWeight.bold,
                         ),
@@ -366,7 +369,7 @@ class _SignupPageState extends State<SignupPage> {
                       const Text(
                         "Already have an account?",
                         style: TextStyle(
-                          fontSize: 12.0,
+                          fontSize: 14.0,
                           color: Colors.black,
                         ),),
                       RawMaterialButton(
@@ -378,7 +381,7 @@ class _SignupPageState extends State<SignupPage> {
                         child: const Text(' Login',
                           style: TextStyle(
                             color: Color(0xFFba181b),
-                            fontSize: 12.0,
+                            fontSize: 14.0,
                           ),
                         ),
                       ),

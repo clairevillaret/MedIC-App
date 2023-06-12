@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Email',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Password',
-                        labelStyle: const TextStyle(fontSize: 12),
+                        labelStyle: const TextStyle(fontSize: 14),
                         suffixIcon: GestureDetector(
                             onTap: () {
                               _togglePassword();
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: const Text('LOGIN',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 12.0,
+                            fontSize: 14.0,
                             letterSpacing: 1.5,
                             fontWeight: FontWeight.bold,
                           ),),
@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                         const Text(
                           "Don't have an account yet?",
                           style: TextStyle(
-                            fontSize: 12.0,
+                            fontSize: 14.0,
                             color: Colors.black,
                           ),),
                         RawMaterialButton(
@@ -199,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: const Text(' Sign Up',
                             style: TextStyle(
                               color: Color(0xFFba181b),
-                              fontSize: 12.0,
+                              fontSize: 14.0,
                             ),
                           ),
                         ),
