@@ -107,7 +107,7 @@ class _HospitalSelectState extends State<HospitalSelect> {
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
                       hintText: "search hospital",
-                      hintStyle: TextStyle(fontSize: 12),
+                      hintStyle: TextStyle(fontSize: 14),
                     ),
                   ),
                 ),

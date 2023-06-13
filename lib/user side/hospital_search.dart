@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/show_availability.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HospitalSearch extends StatefulWidget {
   const HospitalSearch({Key? key}) : super(key: key);
@@ -64,7 +65,7 @@ class _HospitalSearchState extends State<HospitalSearch> {
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
                       hintText: "search hospital",
-                      hintStyle: TextStyle(fontSize: 12),
+                      hintStyle: TextStyle(fontSize: 14),
                     ),
                   ),
                 ),
@@ -140,7 +141,24 @@ class _HospitalSearchState extends State<HospitalSearch> {
                         children: [
                           const Icon(Icons.call, size: 20.0,color: Colors.red,),
                           Text(
-                            documentSnapshot['Contact_num'].toString())
+                            documentSnapshot['Contact_num'].toString()),
+                          const SizedBox(width: 20.0),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal:30, vertical:0),
+                              shape: const RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.red),
+                              )
+                            ),
+                            onPressed: () async {
+                              final Uri launchUri = Uri(
+                                scheme: 'tel',
+                                path: documentSnapshot['Contact_num'].toString(),
+                              );
+                              await launchUrl(launchUri);
+                            },
+                              child: const Text("Call"),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 3.0),
