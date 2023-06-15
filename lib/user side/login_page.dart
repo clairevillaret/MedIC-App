@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:medic/user%20side/home_screen.dart';
 import 'package:medic/user%20side/signup_page.dart';
 
@@ -29,9 +29,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future logIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim());
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+      if (!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return Fluttertoast.showToast(msg: 'No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        Fluttertoast.showToast(msg: 'Wrong password provided for that user.');
+      }
+    }
+
   }
 
   @override
@@ -46,9 +57,10 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-                margin: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 50.0),
+                margin: const EdgeInsets.fromLTRB(0.0, 200.0, 0.0, 50.0),
                 height: 150,
                 width: double.infinity,
                 decoration: const BoxDecoration(
@@ -62,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       vertical: 30.0, horizontal: 0.0),
                   child: const Text("MedIC",
                     style: TextStyle(
-                      fontSize: 70.0,
+                      fontSize: 50.0,
                       color: Color(0xFFba181b),
                       fontWeight: FontWeight.w500,
                       letterSpacing: 10.0,
@@ -87,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Email',
+                        labelStyle: const TextStyle(fontSize: 14),
                       ),
                       validator: (value){
                         if(value == null || value.isEmpty){
@@ -107,38 +120,39 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         labelText: 'Password',
+                        labelStyle: const TextStyle(fontSize: 14),
                         suffixIcon: GestureDetector(
                             onTap: () {
                               _togglePassword();
                             },
-                              //isHiddenPassword = !isHiddenPassword;
+                            //isHiddenPassword = !isHiddenPassword;
                             child: Icon(
-                              isHiddenPassword? Icons.visibility
-                              : Icons.visibility_off)),
+                                isHiddenPassword? Icons.visibility
+                                    : Icons.visibility_off)),
                       ),
                       validator: (value){
-                      if(value == null || value.isEmpty){
-                        return "* Required";
-                      }
-                      return null;
-                    },
+                        if(value == null || value.isEmpty){
+                          return "* Required";
+                        }
+                        return null;
+                      },
                     ),
                     Row(
-                      children: <Widget>[
-                        const Expanded(
+                      children: const <Widget>[
+                        Expanded(
                           child: SizedBox(
                             width: double.infinity,
                           ),
                         ),
-                        RawMaterialButton(
-                          constraints: const BoxConstraints(),
-                          onPressed: () {},
-                          child: const Text('Forgot Password?',
-                            style: TextStyle(
-                              fontSize: 14.0,
-                            ),
-                          ),
-                        ),
+                        // RawMaterialButton(
+                        //   constraints: const BoxConstraints(),
+                        //   onPressed: () {},
+                        //   child: const Text('Forgot Password?',
+                        //     style: TextStyle(
+                        //       fontSize: 14.0,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     Container(
@@ -155,18 +169,14 @@ class _LoginPageState extends State<LoginPage> {
                           side: const BorderSide(color: Color(0xFFba181b)),
                         ),
                         onPressed: () {
-                          logIn();
-                          // if (_formKey.currentState!.validate()){
-                          //   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-                          //   // ScaffoldMessenger.of(context).showSnackBar(
-                          //   //   const SnackBar(content: Text('Processing Data')),
-                          //   // );
-                          // }
+                          if (_formKey.currentState!.validate()) {
+                            logIn();
+                          }
                         },
                         child: const Text('LOGIN',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18.0,
+                            fontSize: 14.0,
                             letterSpacing: 1.5,
                             fontWeight: FontWeight.bold,
                           ),),
@@ -178,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                         const Text(
                           "Don't have an account yet?",
                           style: TextStyle(
-                            fontSize: 18.0,
+                            fontSize: 14.0,
                             color: Colors.black,
                           ),),
                         RawMaterialButton(
@@ -189,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: const Text(' Sign Up',
                             style: TextStyle(
                               color: Color(0xFFba181b),
-                              fontSize: 18.0,
+                              fontSize: 14.0,
                             ),
                           ),
                         ),

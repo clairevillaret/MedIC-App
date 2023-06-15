@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medic/user%20side/home_screen.dart';
+import 'package:medic/user%20side/self_page.dart';
 import 'package:medic/user%20side/triage_form.dart';
 
 
@@ -27,71 +28,78 @@ class _FellowSelfState extends State<FellowSelf>{
                 icon: const Icon(Icons.arrow_back),
                 iconSize: 25.0,
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomeScreen()),  (Route<dynamic> route) => false,);
                 },
               ),
             title: const Text("MedIC",
             style: TextStyle(
-              fontSize: 20.0,
               letterSpacing: 2.0,
             ),
             )
           ),
           backgroundColor: Colors.transparent,
           body: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              Row(
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        RawMaterialButton(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const TriageForm()));
-                          },
-                          child: Image.asset('images/fellow.png',
-                            height: 200.0,
-                            width: 200.0,),
-                        ),
-                        const Text("Fill in personal data \nmanually",
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500,
-                        ))
-                      ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          RawMaterialButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const TriageForm()));
+                            },
+                            child: Image.asset('images/fellow.png',
+                              height: 200.0,
+                              width: 200.0,),
+                          ),
+                          const Text("Fill in personal data \nmanually",
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                          ))
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        RawMaterialButton(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onPressed: () { },
-                          child: Image.asset('images/self.png',
-                            height: 200.0,
-                            width: 200.0,),
-                        ),
-                        const Text("Auto-fill from personal \ninformation on app",
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500,
-                            ))
-                      ],
-                    )
-                  ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          RawMaterialButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const SelfAutofill()));
+                            },
+                            child: Image.asset('images/self.png',
+                              height: 200.0,
+                              width: 200.0,),
+                          ),
+                          const Text("Auto-fill from personal \ninformation on app",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w500,
+                              ))
+                        ],
+                      )
+                    ),
 
-                ],
-              ),
-            ],
-          )
+                  ],
+                ),
+              ],
+          ),
+            )
         ),
       ),
       ),
