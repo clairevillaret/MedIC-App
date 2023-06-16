@@ -31,8 +31,9 @@ class _SelfAutofillState extends State<SelfAutofill>{
   var userBirthday = '';
   var userNumber = '';
   var address = '';
+  String age = '';
   final bdayController = TextEditingController();
-  final ageController = TextEditingController();
+  var ageController = TextEditingController();
 
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
 
@@ -78,6 +79,19 @@ class _SelfAutofillState extends State<SelfAutofill>{
       listSymptoms.add(item.toString());
     }
     return listSymptoms.toList();
+  }
+
+  calculateAge() {
+    List<String> words = userBirthday.split(" ");
+    var birthYear = int.tryParse(words[2]); // Output: [This, is, a, sample, text]
+    DateTime now  = DateTime.now();
+    setState(() {
+      age = (now.year - birthYear!).toString();
+    });
+    print(age);
+    ageController.text = age;
+    // return age;
+
   }
 
 
@@ -259,6 +273,28 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                       ),
                                     ],
                                   ),
+                                  // GestureDetector(
+                                  //   onTap: calculateAge,
+                                  //   child: Row(
+                                  //     children: [
+                                  //       const Text("Age:",
+                                  //         style: TextStyle(
+                                  //           fontSize: 14.0,
+                                  //         ),
+                                  //
+                                  //       ),
+                                  //       Expanded(
+                                  //         child: ListTile(
+                                  //           title: Text(age,
+                                  //               style: const TextStyle(
+                                  //                 fontSize: 14.0,
+                                  //                 fontWeight: FontWeight.bold,
+                                  //               )),
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
                                   Row(
                                     children: [
                                       const Text("Contact No:",
@@ -281,14 +317,16 @@ class _SelfAutofillState extends State<SelfAutofill>{
                             },
                           );
                         }
-                        return Text('An error has occurred: ${snapshot.error}');
+                        return const Text('');
                       }
                   ),
+
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: TextFormField(
+                          onTap: calculateAge,
                           controller: ageController,
                           decoration: const InputDecoration(
                             labelText: 'Age',
@@ -308,6 +346,7 @@ class _SelfAutofillState extends State<SelfAutofill>{
                                 return "enter a valid age";
                               }
                             }
+
                             return null;
                           },
                         ),

@@ -90,7 +90,7 @@ class _AmbulanceWidgetState extends State<AmbulanceWidget> {
                     Text("$hospital \n will accommodate you/the patient.",
                       style: const TextStyle(
                         color: Colors.black,
-                        fontSize: 16.0,
+                        fontSize: 18.0,
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
@@ -109,7 +109,7 @@ class _AmbulanceWidgetState extends State<AmbulanceWidget> {
                     const SizedBox(height: 18.0,),
                     const Text("The ambulance is coming...",
                       style: TextStyle(
-                        fontSize: 14.0,
+                        fontSize: 16.0,
                         color: Colors.black54,
                         fontWeight: FontWeight.w500,
                       ),
@@ -128,7 +128,7 @@ class _AmbulanceWidgetState extends State<AmbulanceWidget> {
                     const Text("Please confirm if the ambulance has arrived.",
                       style: TextStyle(
                           color: Colors.black54,
-                          fontSize: 12.0
+                          fontSize: 14.0
                       ),
                       textAlign: TextAlign.center,
                     ),

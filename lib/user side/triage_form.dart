@@ -26,7 +26,7 @@ class TriageForm extends StatefulWidget {
 class _TriageFormState extends State<TriageForm> {
 
   final nameController = TextEditingController();
-  final ageController = TextEditingController();
+  var ageController = TextEditingController();
   final formController = TextEditingController();
   final bdayController = TextEditingController();
   final addressController = TextEditingController();
@@ -44,6 +44,8 @@ class _TriageFormState extends State<TriageForm> {
   Position? userLocation;
   double? userLat;
   double? userLong;
+  String age = "";
+
 
   bool requestAmbulance = true;
   bool privateVehicle = false;
@@ -78,6 +80,20 @@ class _TriageFormState extends State<TriageForm> {
     }
     return listSymptoms.toList();
   }
+
+  calculateAge() {
+    List<String> words = bdayController.text.split(" ");
+    var birthYear = int.tryParse(words[2]); // Output: [This, is, a, sample, text]
+    DateTime now  = DateTime.now();
+    setState(() {
+      age = (now.year - birthYear!).toString();
+    });
+    print(age);
+    ageController.text = age;
+    // return age;
+
+  }
+
 
   generateTriageResults() {
     if (countEmergency > 0) {
@@ -280,6 +296,7 @@ class _TriageFormState extends State<TriageForm> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        onTap: calculateAge,
                         controller: ageController,
                         decoration: const InputDecoration(
                           labelText: 'Age',

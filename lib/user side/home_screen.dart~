@@ -156,16 +156,8 @@ class _HomeScreenState extends State<HomeScreen>{
                               isDeviceConnected =
                               await InternetConnectionChecker().hasConnection;
                               !isDeviceConnected
-                                  ? () {Fluttertoast.showToast(msg: 'Internet Connection is required to proceed.');
-                                setState(() {
-                                  defaultImage = 'images/disabled_button.png';
-                                });
-                                null;}()
-                                  : () {Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));
-                              setState(() {
-                                defaultImage = 'images/emergency_button.png';
-                              });
-                              }();
+                                  ? () {Fluttertoast.showToast(msg: 'Internet Connection is required to proceed.'); null;}()
+                                  : () {Navigator.push(context, MaterialPageRoute(builder: (context) => const FellowSelf()));}();
 
                             },
                             child: Image.asset(defaultImage,
